@@ -1,0 +1,58 @@
+{
+	"tooltip.solpotpie.disabled": "This food does not give any points.",
+	"tooltip.solpotpie.not_yet_eaten": "Not yet eaten. What does it taste like?",
+
+	"command.solpotpie.solpotpie.no_permissions": "You do not have the permissions necessary to apply this command to other players!",
+
+	"command.solpotpie.solpotpie.clear.success": "Food list reset!",
+	"command.solpotpie.solpotpie.stats_feedback": "Lifetime Points: %.1f | Hearts: %d | Next heart in %.1f points | Recent variety: %d",
+	"command.solpotpie.solpotpie.sync.success": "Food list synchronized!",
+	"command.solpotpie.solpotpie.origin.invalidated": "Origin cache invalidated!",
+	"command.solpotpie.solpotpie.origin.cleared": "Origin cache cleared!",
+	"command.solpotpie.solpotpie.origin.inapplicable": "Origins is not installed.",
+
+	"item.solpotpie.food_book": "Food Book",
+	"item.solpotpie.lunchbox": "Lunchbox",
+	"item.solpotpie.container.lunchbox": "Lunchbox",
+    "item.solpotpie.golden_lunchbox": "Golden Lunchbox",
+    "item.solpotpie.container.golden_lunchbox": "Golden Lunchbox",
+	"item.solpotpie.lunchbag": "Lunchbag",
+	"item.solpotpie.container.lunchbag": "Lunchbag",
+
+	"key.solpotpie.open_food_book": "Open Food Book",
+	"key.solpotpie.category": "Spice of Life: Pot Pie Edition",
+
+	"gui.solpotpie.food_book.stats": "Overview",
+	"gui.solpotpie.food_book.stats.hearts": "Hearts Earned",
+	"gui.solpotpie.food_book.stats.lifetime_points": "Lifetime Food Points",
+	"gui.solpotpie.food_book.stats.next_heart": "Next heart in %.1f points",
+	"gui.solpotpie.food_book.stats.next_heart_tooltip": "Eat foods you have never eaten before to earn points. Hearts are permanent once earned.",
+	"gui.solpotpie.food_book.stats.recent_variety": "Different Foods Eaten Recently",
+	"gui.solpotpie.food_book.food_queue_label": "Food Eaten",
+	"gui.solpotpie.food_book.queue.food_queue_tooltip": "A list of the foods you ate recently. Eating these again restores less hunger until they age out of the list.",
+
+	"gui.solpotpie.food_book.fraction": "%1$s/%2$s",
+
+	"gui.solpotpie.food_book.queue.tooltip.score_label": "Food Score",
+	"gui.solpotpie.food_book.queue.tooltip.last_eaten_label": "Last eaten: %d meals ago",
+	"gui.solpotpie.food_book.queue.tooltip.last_eaten_label_singular": "Last eaten: %d meal ago",
+
+	"config.solpotpie.is_food_tooltip_enabled": "Enable Food Tooltip",
+	"config.solpotpie.hide_values_until_eaten": "Hide Values Until Eaten",
+	"config.solpotpie.food_blacklist": "Blacklist",
+	"config.solpotpie.food_whitelist": "Whitelist (disables blacklist)",
+	"config.solpotpie.reset_on_death": "Reset Recent Foods on Death",
+	"config.solpotpie.base_heart_cost": "Base Heart Cost",
+	"config.solpotpie.heart_cost_increment": "Heart Cost Increment",
+	"config.solpotpie.health_per_heart": "Health per Heart",
+	"config.solpotpie.max_hearts": "Maximum Hearts",
+	"config.solpotpie.craft_multiplier": "Craft Multiplier",
+	"config.solpotpie.nutrition_divisor": "Nutrition Divisor",
+	"config.solpotpie.max_score": "Maximum Food Score",
+	"config.solpotpie.score_overrides": "Score Overrides",
+	"config.solpotpie.diminishing_returns_enabled": "Enable Diminishing Returns",
+	"config.solpotpie.diminishing_floor": "Diminishing Returns Floor",
+	"config.solpotpie.queue_size": "Recent Food Queue Size",
+	"config.solpotpie.should_forbidden_count": "Blacklisted Foods Take Queue Spots",
+	"config.solpotpie.limit_progression_to_survival": "Limit Progression to Survival"
+}

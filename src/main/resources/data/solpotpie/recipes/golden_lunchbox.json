@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:gold_ingot"
+    },
+    "B": {
+      "item": "solpotpie:lunchbox"
+    }
+  },
+  "result": {
+    "item": "solpotpie:golden_lunchbox"
+  }
+}
