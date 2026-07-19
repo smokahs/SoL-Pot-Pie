@@ -43,7 +43,7 @@ public final class TooltipHandler {
 		}
 
 		if (!foodList.hasEverEaten(food)) {
-			tooltip.add(localizedTooltip("not_yet_eaten", ChatFormatting.AQUA));
+			tooltip.add(localizedTooltip("not_yet_eaten", ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC));
 			if (SOLPotPieConfig.shouldHideValuesUntilEaten()) {
 				return;
 			}
@@ -64,8 +64,8 @@ public final class TooltipHandler {
 		}
 	}
 
-	private static Component localizedTooltip(String path, ChatFormatting color) {
-		return localizedComponent("tooltip", path).withStyle(style -> style.applyFormat(color));
+	private static Component localizedTooltip(String path, ChatFormatting... formats) {
+		return localizedComponent("tooltip", path).withStyle(formats);
 	}
 
 	private TooltipHandler() {}

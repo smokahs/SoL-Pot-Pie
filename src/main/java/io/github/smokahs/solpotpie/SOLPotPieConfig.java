@@ -100,9 +100,7 @@ public final class SOLPotPieConfig
 
 	public static int maxHearts() { return SERVER.maxHearts.get(); }
 
-	public static double craftMultiplier() { return SERVER.craftMultiplier.get(); }
-
-	public static double nutritionDivisor() { return SERVER.nutritionDivisor.get(); }
+	public static double scoreMultiplier() { return SERVER.scoreMultiplier.get(); }
 
 	public static double maxScore() { return SERVER.maxScore.get(); }
 
@@ -124,8 +122,7 @@ public final class SOLPotPieConfig
 		public final DoubleValue healthPerHeart;
 		public final IntValue maxHearts;
 
-		public final DoubleValue craftMultiplier;
-		public final DoubleValue nutritionDivisor;
+		public final DoubleValue scoreMultiplier;
 		public final DoubleValue maxScore;
 
 		public final BooleanValue diminishingReturnsEnabled;
@@ -144,7 +141,7 @@ public final class SOLPotPieConfig
 							+" Eating a food for the FIRST time permanently adds its score to your lifetime points.\n"
 							+" Eating it again gives no further points.\n"
 							+"\n")
-					.defineInRange("baseHeartCost", 10.0, 0.1, 10000.0);
+					.defineInRange("baseHeartCost", 8.0, 0.1, 10000.0);
 
 			heartCostIncrement = builder
 					.translation(localizationPath("heart_cost_increment"))
@@ -169,21 +166,16 @@ public final class SOLPotPieConfig
 			builder.pop();
 			builder.push("Scoring");
 
-			craftMultiplier = builder
-					.translation(localizationPath("craft_multiplier"))
-					.comment(" Every food is automatically assigned a score based on its crafting recipe tree.\n"
-							+" Foods with no food ingredients get a base score from their nutrition and saturation.\n"
-							+" Foods crafted from other foods get the sum of their food ingredients' scores,\n"
-							+" multiplied by this value (and divided by the recipe's output count).\n"
+			scoreMultiplier = builder
+					.translation(localizationPath("score_multiplier"))
+					.comment(" Every food is scored from its own nutrition and saturation (no crafting recipe walk).\n"
+							+" saturation is counted once (nutrition x saturationModifier), then the score follows a\n"
+							+" curve: it ramps up linearly to an average of 5, and compresses logarithmically above\n"
+							+" that, so very filling foods can't run away with huge scores.\n"
+							+" This multiplier scales every score up or down.\n"
+							+" Raise it if permanent hearts feel too slow to earn, lower it if too fast.\n"
 							+"\n")
-					.defineInRange("craftMultiplier", 1.3, 1.0, 10.0);
-
-			nutritionDivisor = builder
-					.translation(localizationPath("nutrition_divisor"))
-					.comment("\n Base score = average of nutrition and saturation, divided by this.\n"
-							+" Higher = all base foods are worth less.\n"
-							+"\n")
-					.defineInRange("nutritionDivisor", 4.0, 0.1, 100.0);
+					.defineInRange("scoreMultiplier", 1.0, 0.1, 100.0);
 
 			maxScore = builder
 					.translation(localizationPath("max_score"))
@@ -194,7 +186,7 @@ public final class SOLPotPieConfig
 			scoreOverrides = builder
 					.translation(localizationPath("score_overrides"))
 					.comment("\n Override the automatically computed score of individual foods here.\n"
-							+" Use this for foods made in machines/mod recipes the recipe walker can't see.\n"
+							+" Use this to hand-tune special or modded foods whose nutrition-based score doesn't fit.\n"
 							+" Each entry is a string of the form [registry name],[score]\n"
 							+" e.g. \"minecraft:enchanted_golden_apple,10\"\n"
 							+" Note that tags are NOT currently supported.\n"

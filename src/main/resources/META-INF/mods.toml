@@ -15,8 +15,8 @@ authors = "smokahs"
 	description = '''
 A mod designed to encourage dietary variety!
 
-Every food has a score based on its crafting tree and nutrition. Eating a food for the first time permanently
-adds its score to your lifetime points, and every 10 points earns a permanent extra heart. Eating the same
+Every food has a score based on its own nutrition and saturation. Eating a food for the first time permanently
+adds its score to your lifetime points, and every few points earns a permanent extra heart. Eating the same
 foods over and over restores less and less hunger, so keep your diet varied!
 '''
 

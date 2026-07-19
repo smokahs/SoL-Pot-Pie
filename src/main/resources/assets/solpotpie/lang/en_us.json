@@ -24,10 +24,10 @@
 
 	"gui.solpotpie.food_book.stats": "Overview",
 	"gui.solpotpie.food_book.stats.hearts": "Hearts Earned",
-	"gui.solpotpie.food_book.stats.lifetime_points": "Lifetime Food Points",
-	"gui.solpotpie.food_book.stats.next_heart": "Next heart in %.1f points",
+	"gui.solpotpie.food_book.stats.lifetime_points": "Lifetime Points",
+	"gui.solpotpie.food_book.stats.next_heart": "Next heart: %s pts",
 	"gui.solpotpie.food_book.stats.next_heart_tooltip": "Eat foods you have never eaten before to earn points. Hearts are permanent once earned.",
-	"gui.solpotpie.food_book.stats.recent_variety": "Different Foods Eaten Recently",
+	"gui.solpotpie.food_book.stats.recent_variety": "Foods Eaten Recently",
 	"gui.solpotpie.food_book.food_queue_label": "Food Eaten",
 	"gui.solpotpie.food_book.queue.food_queue_tooltip": "A list of the foods you ate recently. Eating these again restores less hunger until they age out of the list.",
 
@@ -46,8 +46,7 @@
 	"config.solpotpie.heart_cost_increment": "Heart Cost Increment",
 	"config.solpotpie.health_per_heart": "Health per Heart",
 	"config.solpotpie.max_hearts": "Maximum Hearts",
-	"config.solpotpie.craft_multiplier": "Craft Multiplier",
-	"config.solpotpie.nutrition_divisor": "Nutrition Divisor",
+	"config.solpotpie.score_multiplier": "Score Multiplier",
 	"config.solpotpie.max_score": "Maximum Food Score",
 	"config.solpotpie.score_overrides": "Score Overrides",
 	"config.solpotpie.diminishing_returns_enabled": "Enable Diminishing Returns",

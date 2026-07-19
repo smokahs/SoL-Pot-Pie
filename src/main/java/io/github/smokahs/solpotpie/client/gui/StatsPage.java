@@ -31,7 +31,7 @@ public class StatsPage extends Page {
 		));
 
 		UILabel nextHeartLabel = new UILabel(
-				localized("gui", "food_book.stats.next_heart", nextHeartAt - lifetimePoints));
+				localized("gui", "food_book.stats.next_heart", String.format("%.2f", nextHeartAt - lifetimePoints)));
 		nextHeartLabel.color = FoodBookScreen.lessBlack;
 		nextHeartLabel.tooltip = localized("gui", "food_book.stats.next_heart_tooltip");
 		mainStack.addChild(nextHeartLabel);

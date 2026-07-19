@@ -202,7 +202,7 @@ public final class FoodList implements FoodCapability {
 			return ConfigHandler.scoreMap.get(food);
 		}
 
-		return FoodScores.nutritionBase(food.item);
+		return FoodScores.score(food.item);
 	}
 
 	public Set<Map.Entry<FoodInstance, Integer>> getData() {

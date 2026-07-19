@@ -68,7 +68,7 @@ public class ConfigHandler {
 	}
 
 	public static void rebuildScores(MinecraftServer server) {
-		Map<FoodInstance, Double> newScoreMap = FoodScores.compute(server);
+		Map<FoodInstance, Double> newScoreMap = FoodScores.compute();
 		newScoreMap.putAll(ComplexityParser.parse(SOLPotPieConfig.getScoreOverrides()));
 		scoreMap = newScoreMap;
 	}
