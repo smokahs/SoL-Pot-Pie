@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/smokahs/SoL-Pot-Pie/blob/1.20.1/webassets/pot_pie_full_res.png?raw=true" width="156" alt="Spice of Life: Pot Pie Edition" />
+<img src="https://github.com/smokahs/SoL-Pot-Pie/blob/1.20.1/webassets/logo.png?raw=true" width="156" alt="Spice of Life: Pot Pie Edition" />
 
 # Spice of Life: Pot Pie Edition
 

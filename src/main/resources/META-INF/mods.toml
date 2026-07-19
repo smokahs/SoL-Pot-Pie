@@ -12,6 +12,7 @@ authors = "smokahs"
 	modId = "solpotpie"
 	version = "${file.jarVersion}"
 	displayName = "Spice of Life: Pot Pie Edition"
+	logoFile = "logo.png"
 	description = '''
 A mod designed to encourage dietary variety!
 
