@@ -8,8 +8,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public final class Localization {
-
-	/** e.g. keyString("tooltip", "eaten_status.not_eaten_1") -> "tooltip.solpotpie.eatenStatus.not_eaten_1") */
 	public static String keyString(String domain, String path) {
 		return domain + "." + SOLPotPie.MOD_ID + "." + path;
 	}
@@ -21,6 +19,12 @@ public final class Localization {
 
 	public static MutableComponent localizedComponent(String domain, String path, Object... args) {
 		return Component.translatable(keyString(domain, path), args);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static String spelledNumber(int number) {
+		String key = keyString("gui", "number." + number);
+		return I18n.exists(key) ? I18n.get(key) : Integer.toString(number);
 	}
 
 	@OnlyIn(Dist.CLIENT)

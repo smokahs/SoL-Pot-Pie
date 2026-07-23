@@ -1,0 +1,23 @@
+{
+	"name": "gui.solpotpie.food_book.entry.untasted",
+	"icon": "minecraft:cake",
+	"category": "solpotpie:diet",
+	"sortnum": 2,
+	"pages": [
+		{
+			"type": "solpotpie:untasted"
+		},
+		{
+			"type": "patchouli:text",
+			"title": "gui.solpotpie.food_book.entry.untasted.title",
+			"text": "gui.solpotpie.food_book.entry.untasted.text_scores",
+			"flag": "solpotpie:show_food_scores"
+		},
+		{
+			"type": "patchouli:text",
+			"title": "gui.solpotpie.food_book.entry.untasted.title",
+			"text": "gui.solpotpie.food_book.entry.untasted.text",
+			"flag": "!solpotpie:show_food_scores"
+		}
+	]
+}

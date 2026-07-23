@@ -1,0 +1,18 @@
+{
+	"type": "farmersdelight:cooking",
+	"conditions": [
+		{ "type": "forge:mod_loaded", "modid": "farmersdelight" }
+	],
+	"recipe_book_tab": "meals",
+	"ingredients": [
+		{ "item": "farmersdelight:pie_crust" },
+		{ "item": "farmersdelight:cooked_chicken_cuts" },
+		{ "item": "farmersdelight:cooked_chicken_cuts" },
+		{ "item": "farmersdelight:onion" },
+		{ "item": "minecraft:carrot" },
+		{ "item": "minecraft:potato" }
+	],
+	"result": { "item": "solpotpie:pot_pie" },
+	"experience": 1.0,
+	"cookingtime": 200
+}

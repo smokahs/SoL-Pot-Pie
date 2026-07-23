@@ -1,8 +1,3 @@
-/**
- * Much of the following code was adapted from Cyclic's storage bag code.
- * Copyright for portions of the code are held by Samson Basset (Lothrazar)
- * as part of Cyclic, under the MIT license.
- */
 package io.github.smokahs.solpotpie.item.foodcontainer;
 
 import net.minecraft.core.Direction;
@@ -20,7 +15,6 @@ import javax.annotation.Nullable;
 public class FoodContainerCapabilityProvider implements ICapabilitySerializable<CompoundTag> {
 	private int slots;
 	private final LazyOptional<ItemStackHandler> inventory = LazyOptional.of(() -> new ItemStackHandler(slots) {
-
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 			return !(stack.getItem() instanceof FoodContainerItem) && super.isItemValid(slot, stack);

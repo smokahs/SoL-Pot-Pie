@@ -1,0 +1,16 @@
+{
+	"name": "gui.solpotpie.food_book.entry.recent_foods",
+	"icon": "minecraft:bread",
+	"category": "solpotpie:diet",
+	"sortnum": 1,
+	"pages": [
+		{
+			"type": "solpotpie:food_queue"
+		},
+		{
+			"type": "patchouli:text",
+			"title": "gui.solpotpie.food_book.entry.recent_foods.title",
+			"text": "gui.solpotpie.food_book.entry.recent_foods.text"
+		}
+	]
+}

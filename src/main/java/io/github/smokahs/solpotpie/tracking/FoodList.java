@@ -4,8 +4,6 @@ import io.github.smokahs.solpotpie.ConfigHandler;
 import io.github.smokahs.solpotpie.SOLPotPieConfig;
 import io.github.smokahs.solpotpie.api.FoodCapability;
 import io.github.smokahs.solpotpie.api.SOLPotPieAPI;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.*;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +22,11 @@ public final class FoodList implements FoodCapability {
 	private static final String NBT_KEY_LAST_EATEN = "lastEaten";
 	private static final String NBT_KEY_FOODS_EATEN = "foodsEaten";
 	private static final String NBT_KEY_ALL_TIME_FOODS = "allTimeFoods";
+	private static final String NBT_KEY_STREAK_FOOD = "streakFood";
+	private static final String NBT_KEY_STREAK = "streak";
+	private static final String NBT_KEY_REPEATS = "repeats";
+
+	public record MealValues(int hunger, float saturation) {}
 
 	public static FoodList get(Player player) {
 		return (FoodList) player.getCapability(SOLPotPieAPI.foodCapability)
@@ -32,10 +35,12 @@ public final class FoodList implements FoodCapability {
 
 	private static final int MAX_FOODS_EATEN = 1000;
 	private int foodsEaten = 0;
-	// Keys - foods eaten recently, Values - lastEaten, i.e. # meals ago the food was last eaten
 	private final Map<FoodInstance, Integer> uniqueFoods = new HashMap<>();
-	// every food ever eaten; each contributes its score to lifetime points exactly once
 	private final Set<FoodInstance> allTimeFoods = new HashSet<>();
+	private final Map<FoodInstance, Integer> repeats = new HashMap<>();
+	@Nullable
+	private FoodInstance streakFood = null;
+	private int streak = 0;
 
 	public FoodList() {}
 
@@ -61,6 +66,7 @@ public final class FoodList implements FoodCapability {
 		FloatTag i = FloatTag.valueOf(lastEaten);
 		tag.put(NBT_KEY_UNIQUE_FOOD, s);
 		tag.put(NBT_KEY_LAST_EATEN, i);
+		tag.putInt(NBT_KEY_REPEATS, repeats.getOrDefault(food, 0));
 
 		return tag;
 	}
@@ -87,18 +93,15 @@ public final class FoodList implements FoodCapability {
 			.forEach(allTimeList::add);
 		tag.put(NBT_KEY_ALL_TIME_FOODS, allTimeList);
 
+		if (streakFood != null) {
+			String encodedStreakFood = streakFood.encode();
+			if (encodedStreakFood != null) {
+				tag.putString(NBT_KEY_STREAK_FOOD, encodedStreakFood);
+				tag.putInt(NBT_KEY_STREAK, streak);
+			}
+		}
+
 		return tag;
-	}
-
-	@Nullable
-	private Pair<FoodInstance, Integer> deserializeUniqueFood(Pair<String, Float> encoded) {
-		FoodInstance uniqueFood = FoodInstance.decode(encoded.getKey());
-		Integer lastEaten = Math.round(encoded.getValue());
-
-		if (uniqueFood == null)
-			return null;
-
-		return new ImmutablePair<>(uniqueFood, lastEaten);
 	}
 
 	/** used for persistent storage */
@@ -107,12 +110,19 @@ public final class FoodList implements FoodCapability {
 		ListTag list = tag.getList(NBT_KEY_FOOD_LIST, Tag.TAG_COMPOUND);
 
 		uniqueFoods.clear();
+		repeats.clear();
 		list.stream()
 			.map(nbt-> (CompoundTag) nbt)
-			.map(nbt -> new ImmutablePair<>(nbt.getString(NBT_KEY_UNIQUE_FOOD), nbt.getFloat(NBT_KEY_LAST_EATEN)))
-			.map(this::deserializeUniqueFood)
-			.filter(Objects::nonNull)
-			.forEach(pair -> uniqueFoods.put(pair.getKey(), pair.getValue()));
+			.forEach(nbt -> {
+				FoodInstance uniqueFood = FoodInstance.decode(nbt.getString(NBT_KEY_UNIQUE_FOOD));
+				if (uniqueFood == null) return;
+
+				uniqueFoods.put(uniqueFood, Math.round(nbt.getFloat(NBT_KEY_LAST_EATEN)));
+				int repeatCount = nbt.getInt(NBT_KEY_REPEATS);
+				if (repeatCount > 0) {
+					repeats.put(uniqueFood, repeatCount);
+				}
+			});
 		foodsEaten = tag.getInt(NBT_KEY_FOODS_EATEN);
 
 		allTimeFoods.clear();
@@ -122,6 +132,11 @@ public final class FoodList implements FoodCapability {
 			.map(FoodInstance::decode)
 			.filter(Objects::nonNull)
 			.forEach(allTimeFoods::add);
+
+		streakFood = tag.contains(NBT_KEY_STREAK_FOOD, Tag.TAG_STRING)
+			? FoodInstance.decode(tag.getString(NBT_KEY_STREAK_FOOD))
+			: null;
+		streak = streakFood == null ? 0 : tag.getInt(NBT_KEY_STREAK);
 	}
 
 	public void addFood(Item food, Map<FoodInstance, Integer> foodMap) {
@@ -132,6 +147,9 @@ public final class FoodList implements FoodCapability {
 		if (foodsEaten < MAX_FOODS_EATEN) {
 			foodsEaten++;
 		}
+
+		FoodInstance newlyEaten = new FoodInstance(food);
+		int carriedEats = effectiveEats(newlyEaten);
 
 		ArrayList<FoodInstance> toRemove = new ArrayList<>();
 
@@ -149,20 +167,64 @@ public final class FoodList implements FoodCapability {
 
 		for (FoodInstance foodInstance : toRemove) {
 			foodMap.remove(foodInstance);
+			repeats.remove(foodInstance);
 		}
 
+		streak = newlyEaten.equals(streakFood) ? streak + 1 : 1;
+		streakFood = newlyEaten;
+
 		if (SOLPotPieConfig.shouldCount(food)) {
-			FoodInstance newlyEaten = new FoodInstance(food);
 			foodMap.put(newlyEaten, 0);
 			allTimeFoods.add(newlyEaten);
+			repeats.put(newlyEaten, carriedEats + 1);
 		}
+	}
+
+	private int effectiveEats(FoodInstance food) {
+		int priorEats = repeats.getOrDefault(food, 0);
+		if (priorEats <= 0) return 0;
+
+		Integer mealsSince = uniqueFoods.get(food);
+		if (mealsSince == null) return 0;
+
+		double recovered = Math.min(1.0, (mealsSince + 1) / (double) SOLPotPieConfig.size()
+				* SOLPotPieConfig.diminishingRecoveryVal());
+		return (int) Math.round(priorEats * (1.0 - recovered));
+	}
+
+	public MealValues diminish(Item food, int nutrition, float saturation) {
+		MealValues full = new MealValues(nutrition, saturation);
+		if (!SOLPotPieConfig.diminishingReturnsEnabled()) return full;
+
+		int priorEats = effectiveEats(new FoodInstance(food));
+		if (priorEats <= 0) return full;
+
+		int eatsToFloor = Math.max(2, SOLPotPieConfig.diminishingEatsToFloor());
+		double slide = Math.min(1.0, priorEats / (double) (eatsToFloor - 1));
+
+		int floorHunger = SOLPotPieConfig.diminishingFloorHunger();
+		float floorSaturation = (float) SOLPotPieConfig.diminishingFloorSaturation();
+
+		int diminishedHunger = (int) Math.round(nutrition + (floorHunger - nutrition) * slide);
+		float diminishedSaturation = (float) (saturation + (floorSaturation - saturation) * slide);
+
+		return new MealValues(
+				Math.min(diminishedHunger, nutrition), Math.min(diminishedSaturation, saturation));
+	}
+
+	public int timesEaten(Item food) {
+		return effectiveEats(new FoodInstance(food));
+	}
+
+	public int currentStreak(Item food) {
+		if (streakFood == null) return 0;
+		return streakFood.equals(new FoodInstance(food)) ? streak : 0;
 	}
 
 	public void addFood(Item food) {
 		addFood(food, uniqueFoods);
 	}
 
-	/** sum of the scores of every food ever eaten; only ever goes up */
 	@Override
 	public double lifetimePoints() {
 		double points = 0;
@@ -172,13 +234,21 @@ public final class FoodList implements FoodCapability {
 		return points;
 	}
 
-	/** @return the number of distinct foods in the recent-food queue */
+	public int discoveredFoods() {
+		int discovered = 0;
+		for (FoodInstance food : allTimeFoods) {
+			if (PackTotals.counts(food.getItem())) {
+				discovered++;
+			}
+		}
+		return discovered;
+	}
+
 	@Override
 	public double foodDiversity() {
 		return uniqueFoods.size();
 	}
 
-	/** lunchbox ranking: new-to-you foods first (highest score), then absent from queue, then least recently eaten */
 	public double rankFood(Item food) {
 		if (!SOLPotPieConfig.shouldCount(food)) {
 			return -1;
@@ -229,15 +299,19 @@ public final class FoodList implements FoodCapability {
 		return allTimeFoods.contains(new FoodInstance(food));
 	}
 
-	/** full reset: recent queue, lifetime foods, and meal counter */
 	public void clearFood() {
 		uniqueFoods.clear();
 		allTimeFoods.clear();
+		repeats.clear();
+		streakFood = null;
+		streak = 0;
 	}
 
-	/** clears only the recent-food queue; lifetime points untouched */
 	public void clearRecent() {
 		uniqueFoods.clear();
+		repeats.clear();
+		streakFood = null;
+		streak = 0;
 	}
 
 	public Set<FoodInstance> getEatenFoods() {

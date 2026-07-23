@@ -1,0 +1,22 @@
+{
+	"name": "gui.solpotpie.food_book.entry.overview",
+	"icon": "minecraft:golden_apple",
+	"category": "solpotpie:diet",
+	"priority": true,
+	"sortnum": 0,
+	"pages": [
+		{
+			"type": "solpotpie:stats"
+		},
+		{
+			"type": "patchouli:text",
+			"title": "gui.solpotpie.food_book.entry.overview.hearts_title",
+			"text": "gui.solpotpie.food_book.entry.overview.hearts_text"
+		},
+		{
+			"type": "patchouli:crafting",
+			"recipe": "solpotpie:food_book",
+			"text": "gui.solpotpie.food_book.entry.overview.book_text"
+		}
+	]
+}

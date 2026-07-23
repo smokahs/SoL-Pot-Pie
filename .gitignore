@@ -8,6 +8,8 @@
 *.psd
 *.DS_Store
 /output
+.settings
+.vscode
 
 #ForgeGradle
 /build

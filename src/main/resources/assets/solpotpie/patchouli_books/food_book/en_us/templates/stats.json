@@ -1,0 +1,23 @@
+{
+	"components": [
+		{
+			"type": "patchouli:header",
+			"text": "gui.solpotpie.food_book.stats",
+			"x": -1,
+			"y": -1
+		},
+		{
+			"type": "patchouli:separator",
+			"x": -1,
+			"y": 12
+		},
+		{
+			"type": "patchouli:custom",
+			"class": "io.github.smokahs.solpotpie.book.StatsComponent",
+			"x": 0,
+			"y": 22,
+			"width": 116,
+			"line_height": 12
+		}
+	]
+}

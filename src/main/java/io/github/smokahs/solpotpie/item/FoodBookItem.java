@@ -1,14 +1,12 @@
 package io.github.smokahs.solpotpie.item;
 
-import io.github.smokahs.solpotpie.client.gui.FoodBookScreen;
+import io.github.smokahs.solpotpie.book.FoodBook;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 
 public final class FoodBookItem extends Item {
 	public FoodBookItem() {
@@ -17,8 +15,8 @@ public final class FoodBookItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-		if (player.isLocalPlayer()) {
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FoodBookScreen.open(player));
+		if (!world.isClientSide) {
+			FoodBook.open(player);
 		}
 
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));

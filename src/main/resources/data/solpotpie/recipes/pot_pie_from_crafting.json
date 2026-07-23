@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"conditions": [
+		{
+			"type": "forge:not",
+			"value": { "type": "forge:mod_loaded", "modid": "farmersdelight" }
+		}
+	],
+	"pattern": [
+		"PCX",
+		"BBB"
+	],
+	"key": {
+		"P": { "item": "minecraft:potato" },
+		"C": { "item": "minecraft:cooked_chicken" },
+		"X": { "item": "minecraft:carrot" },
+		"B": { "item": "minecraft:bread" }
+	},
+	"result": { "item": "solpotpie:pot_pie" }
+}

@@ -1,0 +1,62 @@
+{
+	"components": [
+		{
+			"type": "patchouli:header",
+			"text": "gui.solpotpie.food_book.menu.title",
+			"x": -1,
+			"y": 0
+		},
+		{
+			"type": "patchouli:custom",
+			"class": "io.github.smokahs.solpotpie.book.MenuComponent",
+			"x": 0,
+			"y": 16,
+			"button_width": 110,
+			"button_height": 18,
+			"button_spacing": 2,
+			"child_indent": 10,
+			"preview_rows": 2,
+			"line_height": 12,
+			"panel_offset": 126,
+			"panel_width": 116,
+			"buttons": [
+				{
+					"icon": "minecraft:golden_apple",
+					"label": "food_book.menu.overview",
+					"entry": "solpotpie:diet/overview",
+					"panel": "stats",
+					"children": []
+				},
+				{
+					"icon": "minecraft:bread",
+					"label": "food_book.menu.recent",
+					"entry": "solpotpie:diet/recent_foods",
+					"panel": "recent",
+					"children": []
+				},
+				{
+					"icon": "minecraft:cake",
+					"label": "food_book.menu.untasted",
+					"entry": "solpotpie:diet/untasted",
+					"panel": "untasted",
+					"children": []
+				},
+				{
+					"icon": "minecraft:book",
+					"label": "food_book.menu.more",
+					"panel": "text",
+					"text": "food_book.menu.more_desc",
+					"children": [
+						{
+							"icon": "solpotpie:lunchbox",
+							"label": "food_book.menu.lunchboxes",
+							"entry": "solpotpie:diet/lunchboxes",
+							"panel": "text",
+							"text": "food_book.menu.lunchboxes_desc"
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,23 @@
+{
+	"name": "gui.solpotpie.food_book.entry.lunchboxes",
+	"icon": "solpotpie:lunchbox",
+	"category": "solpotpie:diet",
+	"sortnum": 3,
+	"pages": [
+		{
+			"type": "patchouli:text",
+			"title": "gui.solpotpie.food_book.entry.lunchboxes",
+			"text": "gui.solpotpie.food_book.entry.lunchboxes.text"
+		},
+		{
+			"type": "patchouli:crafting",
+			"recipe": "solpotpie:lunchbag",
+			"recipe2": "solpotpie:lunchbox"
+		},
+		{
+			"type": "patchouli:crafting",
+			"recipe": "solpotpie:golden_lunchbox",
+			"text": "gui.solpotpie.food_book.entry.lunchboxes.golden_text"
+		}
+	]
+}

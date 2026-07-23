@@ -1,8 +1,3 @@
-/**
- * Much of the following code was adapted from Cyclic's storage bag code.
- * Copyright for portions of the code are held by Samson Basset (Lothrazar)
- * as part of Cyclic, under the MIT license.
- */
 package io.github.smokahs.solpotpie.item.foodcontainer;
 
 import io.github.smokahs.solpotpie.SOLPotPie;

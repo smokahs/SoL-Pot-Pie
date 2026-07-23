@@ -49,7 +49,6 @@ public final class CapabilityHandler {
 		FoodList newInstance = FoodList.get(event.getEntity());
 		newInstance.deserializeNBT(original.serializeNBT());
 
-		// hearts are permanent; death only optionally resets the recent queue
 		if (event.isWasDeath() && SOLPotPieConfig.shouldResetOnDeath()) {
 			newInstance.clearRecent();
 		}

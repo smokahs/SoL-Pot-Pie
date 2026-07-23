@@ -35,3 +35,10 @@ foods over and over restores less and less hunger, so keep your diet varied!
 	versionRange = "[1.20.1,)"
 	ordering = "NONE"
 	side = "BOTH"
+
+[[dependencies]]
+	modId = "patchouli"
+	mandatory = true
+	versionRange = "[1.20.1-85,)"
+	ordering = "AFTER"
+	side = "BOTH"

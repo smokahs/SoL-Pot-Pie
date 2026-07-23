@@ -1,0 +1,16 @@
+{
+	"name": "item.solpotpie.food_book",
+	"landing_text": "gui.solpotpie.food_book.landing_text",
+	"subtitle": "gui.solpotpie.food_book.subtitle",
+	"use_resource_pack": true,
+	"i18n": true,
+	"dont_generate_book": true,
+	"custom_book_item": "solpotpie:food_book",
+	"book_texture": "patchouli:textures/gui/book_brown.png",
+	"text_color": "463A2C",
+	"header_color": "A0522D",
+	"nameplate_color": "E8A33D",
+	"show_progress": false,
+	"show_toasts": false,
+	"version": "1"
+}

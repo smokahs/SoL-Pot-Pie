@@ -1,0 +1,24 @@
+{
+	"components": [
+		{
+			"type": "patchouli:header",
+			"text": "gui.solpotpie.food_book.untasted_label",
+			"x": -1,
+			"y": -1
+		},
+		{
+			"type": "patchouli:separator",
+			"x": -1,
+			"y": 12
+		},
+		{
+			"type": "patchouli:custom",
+			"class": "io.github.smokahs.solpotpie.book.UntastedComponent",
+			"x": 4,
+			"y": 22,
+			"columns": 6,
+			"rows": 6,
+			"show_empty_text": true
+		}
+	]
+}

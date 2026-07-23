@@ -2,6 +2,7 @@ package io.github.smokahs.solpotpie;
 
 import io.github.smokahs.solpotpie.tracking.CapabilityHandler;
 import io.github.smokahs.solpotpie.tracking.HeartsHandler;
+import io.github.smokahs.solpotpie.tracking.PackTotals;
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
@@ -21,21 +22,20 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 import java.util.regex.Pattern;
 
-
-@Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID)
+@Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class SOLPotPieConfig
 {
 	private static String localizationPath(String path) {
 		return "config." + SOLPotPie.MOD_ID + "." + path;
 	}
 
-	public static final Server SERVER;
-	public static final ForgeConfigSpec SERVER_SPEC;
+	public static final Common COMMON;
+	public static final ForgeConfigSpec COMMON_SPEC;
 
 	static {
-		Pair<Server, ForgeConfigSpec> specPair = new Builder().configure(Server::new);
-		SERVER = specPair.getLeft();
-		SERVER_SPEC = specPair.getRight();
+		Pair<Common, ForgeConfigSpec> specPair = new Builder().configure(Common::new);
+		COMMON = specPair.getLeft();
+		COMMON_SPEC = specPair.getRight();
 	}
 
 	public static final Client CLIENT;
@@ -49,12 +49,16 @@ public final class SOLPotPieConfig
 
 	public static void setUp() {
 		ModLoadingContext context = ModLoadingContext.get();
-		context.registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
+		context.registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
 		context.registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
 	}
 
 	@SubscribeEvent
 	public static void onConfigReload(ModConfigEvent.Reloading event) {
+		if (event.getConfig().getType() != ModConfig.Type.COMMON) return;
+
+		PackTotals.invalidate();
+
 		MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
 		if (currentServer == null) return;
 
@@ -69,46 +73,76 @@ public final class SOLPotPieConfig
 	}
 
 	public static List<String> getBlacklist() {
-		return new ArrayList<>(SERVER.blacklist.get());
+		return Sync.list(Sync.BLACKLIST, COMMON.blacklist.get());
 	}
 
 	public static List<String> getWhitelist() {
-		return new ArrayList<>(SERVER.whitelist.get());
+		return Sync.list(Sync.WHITELIST, COMMON.whitelist.get());
 	}
 
-	public static List<String> getScoreOverrides() { return new ArrayList<>(SERVER.scoreOverrides.get()); }
+	public static List<String> getScoreOverrides() { return new ArrayList<>(COMMON.scoreOverrides.get()); }
 
 	public static boolean shouldResetOnDeath() {
-		return SERVER.shouldResetOnDeath.get();
+		return Sync.flag(Sync.SHOULD_RESET_ON_DEATH, COMMON.shouldResetOnDeath.get());
 	}
 
 	public static boolean limitProgressionToSurvival() {
-		return SERVER.limitProgressionToSurvival.get();
+		return Sync.flag(Sync.LIMIT_PROGRESSION_TO_SURVIVAL, COMMON.limitProgressionToSurvival.get());
 	}
 
-	public static boolean shouldForbiddenCount() { return SERVER.shouldForbiddenCount.get(); }
+	public static boolean shouldForbiddenCount() {
+		return Sync.flag(Sync.SHOULD_FORBIDDEN_COUNT, COMMON.shouldForbiddenCount.get());
+	}
 
 	public static Integer size() {
-		return SERVER.queueSize.get();
+		return Sync.integer(Sync.QUEUE_SIZE, COMMON.queueSize.get());
 	}
 
-	public static double baseHeartCost() { return SERVER.baseHeartCost.get(); }
+	public static double baseHeartCost() {
+		return Sync.number(Sync.BASE_HEART_COST, COMMON.baseHeartCost.get());
+	}
 
-	public static double heartCostIncrement() { return SERVER.heartCostIncrement.get(); }
+	public static double heartCostIncrement() {
+		return Sync.number(Sync.HEART_COST_INCREMENT, COMMON.heartCostIncrement.get());
+	}
 
-	public static double healthPerHeart() { return SERVER.healthPerHeart.get(); }
+	public static double healthPerHeart() {
+		return Sync.number(Sync.HEALTH_PER_HEART, COMMON.healthPerHeart.get());
+	}
 
-	public static int maxHearts() { return SERVER.maxHearts.get(); }
+	public static int maxHearts() {
+		return Sync.integer(Sync.MAX_HEARTS, COMMON.maxHearts.get());
+	}
 
-	public static double scoreMultiplier() { return SERVER.scoreMultiplier.get(); }
+	public static double scoreMultiplier() {
+		return Sync.number(Sync.SCORE_MULTIPLIER, COMMON.scoreMultiplier.get());
+	}
 
-	public static double maxScore() { return SERVER.maxScore.get(); }
+	public static double maxScore() {
+		return Sync.number(Sync.MAX_SCORE, COMMON.maxScore.get());
+	}
 
-	public static boolean diminishingReturnsEnabled() { return SERVER.diminishingReturnsEnabled.get(); }
+	public static boolean diminishingReturnsEnabled() {
+		return Sync.flag(Sync.DIMINISHING_ENABLED, COMMON.diminishingReturnsEnabled.get());
+	}
 
-	public static double diminishingFloor() { return SERVER.diminishingFloor.get(); }
+	public static int diminishingEatsToFloor() {
+		return Sync.integer(Sync.DIMINISHING_EATS_TO_FLOOR, COMMON.diminishingEatsToFloor.get());
+	}
 
-	public static class Server {
+	public static int diminishingFloorHunger() {
+		return Sync.integer(Sync.DIMINISHING_FLOOR_HUNGER, COMMON.diminishingFloorHunger.get());
+	}
+
+	public static double diminishingFloorSaturation() {
+		return Sync.number(Sync.DIMINISHING_FLOOR_SATURATION, COMMON.diminishingFloorSaturation.get());
+	}
+
+	public static double diminishingRecoveryVal() {
+		return Sync.number(Sync.DIMINISHING_RECOVERY_VAL, COMMON.diminishingRecoveryVal.get());
+	}
+
+	public static class Common {
 		public final ConfigValue<List<? extends String>> blacklist;
 		public final ConfigValue<List<? extends String>> whitelist;
 
@@ -126,13 +160,16 @@ public final class SOLPotPieConfig
 		public final DoubleValue maxScore;
 
 		public final BooleanValue diminishingReturnsEnabled;
-		public final DoubleValue diminishingFloor;
+		public final IntValue diminishingEatsToFloor;
+		public final IntValue diminishingFloorHunger;
+		public final DoubleValue diminishingFloorSaturation;
+		public final DoubleValue diminishingRecoveryVal;
 
 		public final BooleanValue shouldForbiddenCount;
 
 		public final ConfigValue<List<? extends String>> scoreOverrides;
 
-		Server(Builder builder) {
+		Common(Builder builder) {
 			builder.push("Hearts");
 
 			baseHeartCost = builder
@@ -141,7 +178,7 @@ public final class SOLPotPieConfig
 							+" Eating a food for the FIRST time permanently adds its score to your lifetime points.\n"
 							+" Eating it again gives no further points.\n"
 							+"\n")
-					.defineInRange("baseHeartCost", 8.0, 0.1, 10000.0);
+					.defineInRange("baseHeartCost", 10.0, 0.1, 10000.0);
 
 			heartCostIncrement = builder
 					.translation(localizationPath("heart_cost_increment"))
@@ -201,16 +238,45 @@ public final class SOLPotPieConfig
 			diminishingReturnsEnabled = builder
 					.translation(localizationPath("diminishing_returns_enabled"))
 					.comment(" If true, eating a food you already ate recently restores less hunger and saturation.\n"
-							+" The more recently you ate it, the less it restores.\n"
+							+" The more times you have eaten it, the less it restores.\n"
 							+"\n")
 					.define("diminishingReturnsEnabled", true);
 
-			diminishingFloor = builder
-					.translation(localizationPath("diminishing_floor"))
-					.comment("\n The lowest hunger/saturation multiplier possible, applied when re-eating a food\n"
-							+" you JUST ate. Scales back up to 1.0 as the food ages out of the recent-food queue.\n"
+			diminishingEatsToFloor = builder
+					.translation(localizationPath("diminishing_eats_to_floor"))
+					.comment("\n How many times a food has to be eaten before it bottoms out. The first eat is\n"
+							+" always worth the food's full value, and each eat after that slides linearly down\n"
+							+" to the floor below, which is reached on this eat and stays there.\n"
+							+" The count only resets once the food ages out of the recent-food queue entirely,\n"
+							+" so it is tied to queueSize.\n"
 							+"\n")
-					.defineInRange("diminishingFloor", 0.3, 0.0, 1.0);
+					.defineInRange("diminishingEatsToFloor", 5, 2, 100);
+
+			diminishingFloorHunger = builder
+					.translation(localizationPath("diminishing_floor_hunger"))
+					.comment("\n Hunger a food restores once it has bottomed out, no matter how filling it is.\n"
+							+" 1 is half a shank. This is a flat amount, not a multiplier, so steak and bread\n"
+							+" end up equally worthless when spammed.\n"
+							+"\n")
+					.defineInRange("diminishingFloorHunger", 1, 0, 20);
+
+			diminishingRecoveryVal = builder
+					.translation(localizationPath("diminishing_recovery_val"))
+					.comment("\n How fast a worn-out food climbs back to its full value as you eat other things.\n"
+							+" 1.0 spreads the whole recovery across queueSize meals, so a food is fully back to\n"
+							+" normal right as it ages out of the recent-food queue.\n"
+							+" Below 1.0 is slower: at 0.5 only half the penalty is walked off by the time the\n"
+							+" food ages out, and the rest goes at once. Above 1.0 is faster: at 2.0 a food is\n"
+							+" fully recovered after half a queue's worth of meals.\n"
+							+" 0.0 disables recovery entirely, so a food only resets by aging out.\n"
+							+"\n")
+					.defineInRange("diminishingRecoveryVal", 1.0, 0.0, 2.0);
+
+			diminishingFloorSaturation = builder
+					.translation(localizationPath("diminishing_floor_saturation"))
+					.comment("\n Saturation a food restores once it has bottomed out. Also a flat amount.\n"
+							+"\n")
+					.defineInRange("diminishingFloorSaturation", 0.5, 0.0, 20.0);
 
 			queueSize = builder
 					.translation(localizationPath("queue_size"))
@@ -313,18 +379,16 @@ public final class SOLPotPieConfig
 		}
 	}
 
-	// TODO: investigate performance of all these get() calls
-
 	public static boolean hasWhitelist() {
-		return !SERVER.whitelist.get().isEmpty();
+		return !Sync.raw(Sync.WHITELIST, COMMON.whitelist.get()).isEmpty();
 	}
 
 	public static boolean isAllowed(Item food) {
 		String id = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(food)).toString();
 		if (hasWhitelist()) {
-			return matchesAnyPattern(id, SERVER.whitelist.get());
+			return matchesAnyPattern(id, Sync.raw(Sync.WHITELIST, COMMON.whitelist.get()));
 		} else {
-			return !matchesAnyPattern(id, SERVER.blacklist.get());
+			return !matchesAnyPattern(id, Sync.raw(Sync.BLACKLIST, COMMON.blacklist.get()));
 		}
 	}
 
@@ -336,13 +400,12 @@ public final class SOLPotPieConfig
 		for (String glob : patterns) {
 			StringBuilder pattern = new StringBuilder(glob.length());
 			for (String part : glob.split("\\*", -1)) {
-				if (!part.isEmpty()) { // not necessary
+				if (!part.isEmpty()) {
 					pattern.append(Pattern.quote(part));
 				}
 				pattern.append(".*");
 			}
 
-			// delete extraneous trailing ".*" wildcard
 			pattern.delete(pattern.length() - 2, pattern.length());
 
 			if (Pattern.matches(pattern.toString(), query)) {

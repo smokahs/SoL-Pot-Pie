@@ -116,7 +116,6 @@ public class FoodContainerItem extends Item {
 		ItemStack foodCopy = bestFood.copy();
 		if (bestFood.isEdible() && !bestFood.isEmpty()) {
 			ItemStack result = bestFood.finishUsingItem(world, entity);
-			// put bowls/bottles etc. into player inventory
 			if (!result.isEdible()) {
 				handler.setStackInSlot(bestFoodSlot, ItemStack.EMPTY);
 				Player playerEntity = (Player) entity;
@@ -127,8 +126,6 @@ public class FoodContainerItem extends Item {
 			}
 
 			if (!world.isClientSide) {
-				// Fire an event instead of directly updating the food list, so that
-				// SoL: Carrot Edition registers the eaten food too.
 				ForgeEventFactory.onItemUseFinish(player, foodCopy, 0, result);
 			}
 		}

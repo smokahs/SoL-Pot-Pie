@@ -3,6 +3,7 @@ package io.github.smokahs.solpotpie;
 import io.github.smokahs.solpotpie.communication.ConfigMessage;
 import io.github.smokahs.solpotpie.tracking.FoodInstance;
 import io.github.smokahs.solpotpie.tracking.FoodScores;
+import io.github.smokahs.solpotpie.tracking.PackTotals;
 import io.github.smokahs.solpotpie.utils.ComplexityParser;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
@@ -20,10 +21,10 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID)
 public class ConfigHandler {
-	/** score of every food, computed from recipes + nutrition, with config overrides applied */
 	public static Map<FoodInstance, Double> scoreMap = new HashMap<>();
 
 	public final static String SCORE_MAP_KEY = "score_map";
+	public final static String SETTINGS_KEY = "settings";
 	public final static String FOOD_KEY = "food";
 	public final static String SCORE_VALUE_KEY = "score";
 	public final static String ENTRY_KEY = "entries";
@@ -47,10 +48,12 @@ public class ConfigHandler {
 	public static CompoundTag serializeConfig() {
 		CompoundTag tag = new CompoundTag();
 		tag.put(SCORE_MAP_KEY, serializeScoreMap());
+		tag.put(SETTINGS_KEY, Sync.serialize());
 		return tag;
 	}
 
 	public static void deserializeConfig(CompoundTag tag) {
+		Sync.accept(tag.getCompound(SETTINGS_KEY));
 		deserializeScoreMap(tag.getCompound(SCORE_MAP_KEY));
 	}
 
@@ -65,12 +68,17 @@ public class ConfigHandler {
 			newScoreMap.put(food, score);
 		}
 		scoreMap = newScoreMap;
+		PackTotals.invalidate();
 	}
 
 	public static void rebuildScores(MinecraftServer server) {
 		Map<FoodInstance, Double> newScoreMap = FoodScores.compute();
 		newScoreMap.putAll(ComplexityParser.parse(SOLPotPieConfig.getScoreOverrides()));
 		scoreMap = newScoreMap;
+		PackTotals.invalidate();
+
+		SOLPotPie.LOGGER.info("Pack ceiling: {} tracked foods, {} points, {} hearts",
+				PackTotals.foodCount(), PackTotals.maxPointsText(), PackTotals.maxHearts());
 	}
 
 	@SubscribeEvent

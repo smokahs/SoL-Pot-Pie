@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.UUID;
 
-/** permanent hearts from lifetime food points; never lost on death or by a monotonous diet */
 @Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID)
 public final class HeartsHandler {
 	private static final UUID HEART_MODIFIER_ID = UUID.fromString("2d43f5c1-6d77-45e2-a1cf-c1b9a87e2b01");
@@ -27,12 +26,10 @@ public final class HeartsHandler {
 
 	private HeartsHandler() {}
 
-	/** points needed to go from heart n-1 to heart n (1-indexed) */
 	public static double costOfHeart(int n) {
 		return SOLPotPieConfig.baseHeartCost() + SOLPotPieConfig.heartCostIncrement() * (n - 1);
 	}
 
-	/** total points needed to have earned n hearts */
 	public static double cumulativeCost(int n) {
 		return SOLPotPieConfig.baseHeartCost() * n
 				+ SOLPotPieConfig.heartCostIncrement() * n * (n - 1) / 2.0;
@@ -68,7 +65,6 @@ public final class HeartsHandler {
 		}
 	}
 
-	/** sol carrot-style celebration: hearts around the player and a level-up chime */
 	private static void celebrate(Player player) {
 		if (!(player instanceof ServerPlayer serverPlayer)) {
 			return;
@@ -82,7 +78,6 @@ public final class HeartsHandler {
 				SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
 	}
 
-	/** @return true if the number of hearts increased */
 	private static boolean applyHearts(Player player, int hearts) {
 		AttributeInstance attribute = player.getAttribute(Attributes.MAX_HEALTH);
 		if (attribute == null) {
@@ -108,7 +103,6 @@ public final class HeartsHandler {
 					new AttributeModifier(HEART_MODIFIER_ID, HEART_MODIFIER_NAME, value, AttributeModifier.Operation.ADDITION));
 		}
 
-		// scale current health proportionally with the new maximum
 		if (!ConfigHandler.isFirstAid && oldMax > 0) {
 			player.setHealth(player.getHealth() * player.getMaxHealth() / oldMax);
 		}

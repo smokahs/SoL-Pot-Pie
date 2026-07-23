@@ -6,33 +6,37 @@
 
 **A Minecraft Forge 1.20.1 mod that rewards eating a varied diet.**
 
+Requires [Patchouli](https://www.curseforge.com/minecraft/mc-mods/patchouli) and [AppleSkin](https://www.curseforge.com/minecraft/mc-mods/AppleSkin)
+
+
 </div>
 
 ## How it works
 
 - **Every food has a nutritional score**, computed automatically from its own nutrition and saturation. Special or modded foods can be hand-tuned with config overrides.
-- **First bites earn permanent hearts.** Eating a food for the *first time ever* permanently adds its score to your lifetime points. Every 8 points (configurable) grants **+1 permanent heart**. Hearts are never lost on death or when your diet changes.
-- **Diminishing returns.** Re-eating a food you ate recently restores less hunger and saturation. It scales back up to full as that food ages out of your recent-food queue, so keep it varied!
+- **Lifetime total.** Eating a food for the *first time ever* permanently adds its score to your lifetime points. Every 10 points (configurable) grants **+1 permanent heart**. Hearts are never lost on death or when your diet changes.
+- **Diminishing returns** now scale on **how many times** you have eaten a food in the last 'eaten food queue'(default 128, configurable). The first time is always worth full value; subsequentinal consumptions lower the value over a default of 5, then it bottoms out. Diminishing return values are shown in AppleSkin as well!
 - **Hidden until tasted.** A food's values stay hidden until you eat it once (`Not yet eaten. What does it taste like?`). AppleSkin's hunger/HUD previews are hidden for un-eaten foods too.
 
 ## In-game items
 
-- **Food Book:** press the keybind (or open the item) for an overview of your hearts earned, lifetime points, points until your next heart, and the foods you've eaten recently.
+- **Food Book:** craft it from a book and a pot pie (use a keybind if its in your inventory!) to see your full record: buttons down the left page, and live detail on the right for whichever one you're hovering. Click through for hearts earned, lifetime points, points until your next heart, how much of the pack you have tasted, and the foods you've eaten recently.
 - **Lunchbag / Lunchbox / Golden Lunchbox:** food storage that holds 5 / 9 / 14 stacks.
+- **Pot Pie:** a hearty meal. Cooked in [Farmer's Delight](https://www.curseforge.com/minecraft/mc-mods/farmers-delight)'s cooking pot from a pie crust, two cooked chicken cuts, an onion, a carrot and a potato; without Farmer's Delight installed it has a vanilla crafting recipe instead.
 
 ## Commands
 
-`/solpotpie` - clear a player's recent-food list, force a sync, print stats (points / hearts / next heart / recent variety), or manage the Origins cache.
+`/solpotpie` - clear a player's recent-food list, force a sync, print stats (points / hearts / next heart / recent variety / foods tasted, each against the pack total), or manage the Origins cache.
 
 ## Configuration
 
-Server config generates **per world** at `saves/<world>/serverconfig`, so existing worlds keep their old defaults. Sections:
+Config generates **globally** at `config/solpotpie-common.toml`, so a pack can ship one file that every world uses (client-only options live beside it in `config/solpotpie-client.toml`). Worlds made before this change keep an old `saves/<world>/serverconfig/solpotpie-server.toml` that is no longer read, so copy any values you had customised over. Sections:
 
 | Section | Controls |
 | --- | --- |
 | **Hearts** | Base heart cost, per-heart cost increment, health per heart, max hearts |
 | **Scoring** | Score multiplier, max score, per-food score overrides |
-| **DiminishingReturns** | Toggle, floor multiplier, recent-food queue size |
+| **DiminishingReturns** | Toggle, eats until a food bottoms out, hunger/saturation floors, recovery rate, recent-food queue size |
 | **Filtering** | Blacklist / whitelist, whether blacklisted foods still fill queue slots |
 | **Miscellaneous** | Reset recent foods on death, limit progression to survival mode |
 | **Client** | Food tooltip toggle, hide values until eaten |

@@ -1,0 +1,16 @@
+{
+	"name": "gui.solpotpie.food_book.entry.menu",
+	"icon": "solpotpie:food_book",
+	"category": "solpotpie:diet",
+	"priority": true,
+	"sortnum": -1,
+	"pages": [
+		{
+			"type": "solpotpie:menu"
+		},
+		{
+			"type": "patchouli:empty",
+			"draw_filler": false
+		}
+	]
+}

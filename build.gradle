@@ -112,6 +112,9 @@ repositories {
 			includeGroup "curse.maven"
 		}
 	}
+	maven {
+		url "https://maven.blamejared.com"
+	}
 }
 
 dependencies {
@@ -127,6 +130,9 @@ dependencies {
 
 	// appleskin soft compat: hide hunger/saturation display for foods not yet eaten
 	implementation fg.deobf("curse.maven:appleskin-248787:4770828")
+
+	// the food book is a patchouli book, so this is a hard dependency
+	implementation fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
 //	runtimeOnly fg.deobf("curse.maven:jei-238222:4062344")
 //	runtimeOnly fg.deobf("curse.maven:appleskin-248787:3927564")

@@ -1,0 +1,39 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"solpotpie:pot_pie_from_crafting"
+		]
+	},
+	"criteria": {
+		"has_cooked_chicken": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{ "item": "minecraft:cooked_chicken" }
+				]
+			}
+		},
+		"has_bread": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{ "item": "minecraft:bread" }
+				]
+			}
+		},
+		"has_the_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "solpotpie:pot_pie_from_crafting"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_cooked_chicken",
+			"has_bread",
+			"has_the_recipe"
+		]
+	]
+}

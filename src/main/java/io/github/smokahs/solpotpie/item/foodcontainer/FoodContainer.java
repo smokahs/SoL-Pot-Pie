@@ -1,8 +1,3 @@
-/**
- * Much of the following code was adapted from Cyclic's storage bag code.
- * Copyright for portions of the code are held by Samson Basset (Lothrazar)
- * as part of Cyclic, under the MIT license.
- */
 package io.github.smokahs.solpotpie.item.foodcontainer;
 
 import io.github.smokahs.solpotpie.client.ContainerScreenRegistry;
@@ -11,7 +6,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-
 
 public class FoodContainer extends AbstractContainerMenu {
 	public static final int PLAYERSIZE = 4 * 9;
@@ -24,7 +18,6 @@ public class FoodContainer extends AbstractContainerMenu {
 	public FoodContainer(int id, Inventory playerInventory, Player player) {
 		super(ContainerScreenRegistry.FOOD_CONTAINER.get(), id);
 
-		// When we hit the hotkey to open a food container, check held items first
 		if (player.getMainHandItem().getItem() instanceof FoodContainerItem) {
 			containerItem = player.getMainHandItem();
 		}
@@ -69,7 +62,6 @@ public class FoodContainer extends AbstractContainerMenu {
 		if (!(slotId < 0 || slotId >= this.slots.size())) {
 			ItemStack clickedStack = this.slots.get(slotId).getItem();
 			if (clickedStack.getItem() instanceof FoodContainerItem) {
-				//lock the bag in place by quitting early
 				return;
 			}
 		}
@@ -91,12 +83,10 @@ public class FoodContainer extends AbstractContainerMenu {
 
 		final ItemStack unchangedCopy = clickedStack.copy();
 		if (slotId < nslots) {
-			// Item is in the FoodContainer, move it to inventory
 			if (!moveItemStackTo(clickedStack, nslots, nslots + PLAYERSIZE, false)) {
 				return ItemStack.EMPTY;
 			}
 		} else {
-			// Item is in the inventory, move it to the FoodContainer
 			if (!moveItemStackTo(clickedStack, 0, nslots, false)) {
 				return ItemStack.EMPTY;
 			}
@@ -134,9 +124,7 @@ public class FoodContainer extends AbstractContainerMenu {
 	}
 
 	protected void layoutPlayerInventorySlots(int leftCol, int topRow) {
-		// Player inventory
 		addSlotBox(playerInventory, 9, leftCol, topRow, 9, 18, 3, 18);
-		// Hotbar
 		topRow += 58;
 		addSlotRange(playerInventory, 0, leftCol, topRow, 9, 18);
 	}

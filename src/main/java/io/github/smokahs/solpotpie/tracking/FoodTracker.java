@@ -3,10 +3,13 @@ package io.github.smokahs.solpotpie.tracking;
 import io.github.smokahs.solpotpie.SOLPotPie;
 import io.github.smokahs.solpotpie.SOLPotPieConfig;
 import io.github.smokahs.solpotpie.item.foodcontainer.FoodContainerItem;
+import net.minecraft.network.protocol.game.ClientboundSetHealthPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,10 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 @Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID)
 public final class FoodTracker {
-	// snapshot of hunger/saturation at eat start, so diminishing returns can scale exactly what the meal restored
 	private static final Map<UUID, float[]> PRE_EAT_STATS = new ConcurrentHashMap<>();
 
 	@SubscribeEvent
@@ -48,6 +49,9 @@ public final class FoodTracker {
 	@SubscribeEvent
 	public static void onFoodEaten(LivingEntityUseItemEvent.Finish event) {
 		if (!HeartsHandler.checkEvent(event)) {
+			if (event.getEntity() instanceof Player player) {
+				PRE_EAT_STATS.remove(player.getUUID());
+			}
 			return;
 		}
 
@@ -57,36 +61,60 @@ public final class FoodTracker {
 		if (!usedItem.isEdible() && usedItem != Items.CAKE) return;
 		if (usedItem instanceof FoodContainerItem) return;
 
-		applyDiminishingReturns(player, usedItem);
+		applyDiminishingReturns(player, event.getItem());
 		updateFoodList(usedItem, player);
 	}
 
-	/** scales down what the meal restored by recency; runs before re-adding, so "just ate this" hits the floor */
-	private static void applyDiminishingReturns(Player player, Item food) {
+	private static void applyDiminishingReturns(Player player, ItemStack stack) {
+		Item food = stack.getItem();
 		float[] preEatStats = PRE_EAT_STATS.remove(player.getUUID());
 
-		if (!SOLPotPieConfig.diminishingReturnsEnabled()) return;
-		if (preEatStats == null) return; // e.g. cake block bites; no snapshot to diff against
+		if (!SOLPotPieConfig.diminishingReturnsEnabled()) {
+			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: disabled in the server config", food);
+			return;
+		}
+		if (preEatStats == null) {
+			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: no pre-eat snapshot", food);
+			return;
+		}
 
-		int lastEaten = FoodList.get(player).getLastEaten(food);
-		if (lastEaten == -1) return; // not eaten recently: full value
+		FoodList foodList = FoodList.get(player);
+		int lastEaten = foodList.getLastEaten(food);
+		if (lastEaten == -1) {
+			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: not in the recent queue", food);
+			return;
+		}
 
-		double floor = SOLPotPieConfig.diminishingFloor();
-		double freshness = Math.min(1.0, (lastEaten + 1) / (double) SOLPotPieConfig.size());
-		double multiplier = floor + (1.0 - floor) * freshness;
+		FoodProperties properties = stack.getFoodProperties(player);
+		if (properties == null) {
+			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: no food properties", food);
+			return;
+		}
+
+		FoodList.MealValues meal = foodList.diminish(food, properties.getNutrition(),
+				properties.getNutrition() * properties.getSaturationModifier() * 2.0F);
 
 		FoodData foodData = player.getFoodData();
 		int preFood = (int) preEatStats[0];
 		float preSaturation = preEatStats[1];
+		int fullFood = foodData.getFoodLevel();
+		float fullSaturation = foodData.getSaturationLevel();
 
-		int gainedFood = foodData.getFoodLevel() - preFood;
-		float gainedSaturation = foodData.getSaturationLevel() - preSaturation;
+		int newFood = Math.min(preFood + meal.hunger(), 20);
+		foodData.setFoodLevel(newFood);
+		foodData.setSaturation(Math.min(preSaturation + meal.saturation(), newFood));
 
-		if (gainedFood > 0) {
-			foodData.setFoodLevel(preFood + (int) Math.round(gainedFood * multiplier));
-		}
-		if (gainedSaturation > 0) {
-			foodData.setSaturation(preSaturation + (float) (gainedSaturation * multiplier));
+		SOLPotPie.LOGGER.debug(
+				"Diminishing returns for {}: eaten {}x already, last eaten {} meals ago, "
+						+ "meal worth {} hunger / {} saturation, hunger {}->{}, saturation {}->{}",
+				food, foodList.timesEaten(food), lastEaten,
+				meal.hunger(), meal.saturation(),
+				fullFood, foodData.getFoodLevel(),
+				fullSaturation, foodData.getSaturationLevel());
+
+		if (player instanceof ServerPlayer serverPlayer) {
+			serverPlayer.connection.send(new ClientboundSetHealthPacket(
+					serverPlayer.getHealth(), foodData.getFoodLevel(), foodData.getSaturationLevel()));
 		}
 	}
 

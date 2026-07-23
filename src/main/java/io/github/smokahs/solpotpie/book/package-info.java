@@ -1,9 +1,6 @@
-/**
-This package builds up a UI library of reusable components.
- */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package io.github.smokahs.solpotpie.client.gui.elements;
+package io.github.smokahs.solpotpie.book;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

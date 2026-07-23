@@ -75,7 +75,14 @@ public final class FoodListCommand {
 		int hearts = HeartsHandler.heartsFromPoints(points);
 		double nextHeartAt = HeartsHandler.cumulativeCost(hearts + 1);
 		MutableComponent feedback = localizedComponent("stats_feedback",
-				points, hearts, nextHeartAt - points, (int) foodList.foodDiversity());
+				String.format("%.1f", points),
+				PackTotals.maxPointsText(),
+				hearts,
+				PackTotals.maxHearts(),
+				String.format("%.1f", nextHeartAt - points),
+				(int) foodList.foodDiversity(),
+				foodList.discoveredFoods(),
+				PackTotals.foodCount());
 		sendFeedback(context.getSource(), feedback);
 		return Command.SINGLE_SUCCESS;
 	}

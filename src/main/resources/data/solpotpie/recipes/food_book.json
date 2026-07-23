@@ -2,7 +2,7 @@
 	"type": "minecraft:crafting_shapeless",
 	"ingredients": [
 		{ "item": "minecraft:book" },
-		{ "item": "minecraft:potato" }
+		{ "item": "solpotpie:pot_pie" }
 	],
 	"result": {
 		"item": "solpotpie:food_book"

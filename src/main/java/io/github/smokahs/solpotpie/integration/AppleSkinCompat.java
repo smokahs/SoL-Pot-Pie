@@ -7,12 +7,35 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
+import squeek.appleskin.api.food.FoodValues;
 
-/** registered only when appleskin is loaded; hides its food value displays for foods never eaten */
 public final class AppleSkinCompat {
 	private AppleSkinCompat() {}
+
+	@SubscribeEvent
+	public static void onFoodValues(FoodValuesEvent event) {
+		Player player = event.player;
+		if (player == null) return;
+
+		ItemStack stack = event.itemStack;
+		if (!stack.isEdible()) return;
+
+		FoodValues shown = event.modifiedFoodValues;
+		FoodList.MealValues meal =
+				FoodList.get(player).diminish(stack.getItem(), shown.hunger, shown.getSaturationIncrement());
+		if (meal.hunger() == shown.hunger && meal.saturation() == shown.getSaturationIncrement()) return;
+
+		if (meal.hunger() <= 0) {
+			event.modifiedFoodValues = new FoodValues(0, 0.0F);
+			return;
+		}
+
+		event.modifiedFoodValues =
+				new FoodValues(meal.hunger(), meal.saturation() / (meal.hunger() * 2.0F));
+	}
 
 	@SubscribeEvent
 	public static void onTooltipOverlay(TooltipOverlayEvent.Pre event) {

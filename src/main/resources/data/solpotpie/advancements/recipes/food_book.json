@@ -6,11 +6,11 @@
 		]
 	},
 	"criteria": {
-		"has_potato": {
+		"has_pot_pie": {
 			"trigger": "minecraft:inventory_changed",
 			"conditions": {
 				"items": [
-					{ "item": "minecraft:potato" }
+					{ "item": "solpotpie:pot_pie" }
 				]
 			}
 		},
@@ -31,7 +31,7 @@
 	},
 	"requirements": [
 		[
-			"has_potato",
+			"has_pot_pie",
 			"has_book",
 			"has_the_recipe"
 		]
