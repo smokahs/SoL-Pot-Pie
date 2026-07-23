@@ -32,6 +32,7 @@ public final class TooltipHandler {
 
 		Item food = event.getItemStack().getItem();
 		if (!food.isEdible()) return;
+		if (!SOLPotPieConfig.hasTooltip(food)) return;
 
 		FoodList foodList = FoodList.get(player);
 		boolean isAllowed = SOLPotPieConfig.isAllowed(food);

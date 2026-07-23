@@ -3,11 +3,13 @@ package io.github.smokahs.solpotpie;
 import io.github.smokahs.solpotpie.client.ContainerScreenRegistry;
 import io.github.smokahs.solpotpie.communication.ConfigMessage;
 import io.github.smokahs.solpotpie.communication.FoodListMessage;
+import io.github.smokahs.solpotpie.item.SOLPotPieItems;
 import io.github.smokahs.solpotpie.item.foodcontainer.FoodContainerScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -70,6 +72,8 @@ public final class SOLPotPie
 
 	public SOLPotPie() {
 		SOLPotPieConfig.setUp();
-		ContainerScreenRegistry.MENU_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ContainerScreenRegistry.MENU_TYPES.register(modEventBus);
+		SOLPotPieItems.register(modEventBus);
 	}
 }

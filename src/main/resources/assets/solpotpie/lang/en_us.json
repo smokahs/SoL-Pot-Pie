@@ -11,6 +11,8 @@
 	"command.solpotpie.solpotpie.origin.cleared": "Origin cache cleared!",
 	"command.solpotpie.solpotpie.origin.inapplicable": "Origins is not installed.",
 
+	"itemGroup.solpotpie": "Spice of Life: Pot Pie Edition",
+
 	"item.solpotpie.food_book": "Food Book",
 	"item.solpotpie.lunchbox": "Lunchbox",
 	"item.solpotpie.container.lunchbox": "Lunchbox",
@@ -39,6 +41,7 @@
 
 	"config.solpotpie.is_food_tooltip_enabled": "Enable Food Tooltip",
 	"config.solpotpie.hide_values_until_eaten": "Hide Values Until Eaten",
+	"config.solpotpie.tooltip_blacklist": "Tooltip Blacklist",
 	"config.solpotpie.food_blacklist": "Blacklist",
 	"config.solpotpie.food_whitelist": "Whitelist (disables blacklist)",
 	"config.solpotpie.reset_on_death": "Reset Recent Foods on Death",

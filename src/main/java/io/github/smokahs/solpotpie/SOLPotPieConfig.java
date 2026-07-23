@@ -268,9 +268,15 @@ public final class SOLPotPieConfig
 		return CLIENT.hideValuesUntilEaten.get();
 	}
 
+	public static boolean hasTooltip(Item food) {
+		String id = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(food)).toString();
+		return !matchesAnyPattern(id, CLIENT.tooltipBlacklist.get());
+	}
+
 	public static class Client {
 		public final BooleanValue isFoodTooltipEnabled;
 		public final BooleanValue hideValuesUntilEaten;
+		public final ConfigValue<List<? extends String>> tooltipBlacklist;
 
 		Client(Builder builder) {
 			builder.push("miscellaneous");
@@ -287,6 +293,21 @@ public final class SOLPotPieConfig
 						+" Unknown foods just show a mysterious flavor line.\n"
 						+"\n")
 				.define("hideValuesUntilEaten", true);
+
+			tooltipBlacklist = builder
+				.translation(localizationPath("tooltip_blacklist"))
+				.comment("\n Items in this list never get any Spice of Life tooltip line, including the\n"
+						+" \"Not yet eaten\" one. Use it for edible items that aren't really meals,\n"
+						+" e.g. lunchboxes or machine/placeholder foods.\n"
+						+" Each entry is a registry name, e.g. \"minecraft:bread\".\n"
+						+" Supports * wildcards, e.g. \"solpotpie:*\" covers every item of this mod.\n"
+						+" This is cosmetic only: it does not change scoring or tracking.\n"
+						+"\n")
+				.defineList("tooltipBlacklist", Lists.newArrayList(
+								"solpotpie:lunchbox",
+								"solpotpie:lunchbag",
+								"solpotpie:golden_lunchbox"),
+						e -> e instanceof String);
 
 			builder.pop();
 		}
