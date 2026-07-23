@@ -24,6 +24,9 @@ Requires [Patchouli](https://www.curseforge.com/minecraft/mc-mods/patchouli) and
 - **Lunchbag / Lunchbox / Golden Lunchbox:** food storage that holds 5 / 9 / 14 stacks.
 - **Pot Pie:** a hearty meal. Cooked in [Farmer's Delight](https://www.curseforge.com/minecraft/mc-mods/farmers-delight)'s cooking pot from a pie crust, two cooked chicken cuts, an onion, a carrot and a potato; without Farmer's Delight installed it has a vanilla crafting recipe instead.
 
+## Changelog
+See [CHANGELOG.md](https://github.com/smokahs/SoL-Pot-Pie/blob/1.20.1/CHANGELOG.md) for version history.
+
 ## Commands
 
 `/solpotpie` - clear a player's recent-food list, force a sync, print stats (points / hearts / next heart / recent variety / foods tasted, each against the pack total), or manage the Origins cache.
