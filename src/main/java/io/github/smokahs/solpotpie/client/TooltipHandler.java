@@ -5,6 +5,7 @@ import io.github.smokahs.solpotpie.SOLPotPieConfig;
 import io.github.smokahs.solpotpie.tracking.FoodInstance;
 import io.github.smokahs.solpotpie.tracking.FoodList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -60,6 +61,11 @@ public final class TooltipHandler {
 			if (SOLPotPieConfig.shouldHideValuesUntilEaten()) {
 				return lines;
 			}
+		}
+
+		if (!Screen.hasShiftDown()) {
+			lines.add(Component.literal(localized("gui", "food_book.queue.tooltip.hold_shift")));
+			return lines;
 		}
 
 		double score = FoodList.getScore(new FoodInstance(food));

@@ -88,6 +88,7 @@
 
 	"gui.solpotpie.food_book.fraction": "%1$s/%2$s",
 
+	"gui.solpotpie.food_book.queue.tooltip.hold_shift": "§8§o[Hold §7§oShift§8§o for stats]",
 	"gui.solpotpie.food_book.queue.tooltip.score_label": "Food Score",
 	"gui.solpotpie.food_book.queue.tooltip.last_eaten_label": "Last eaten: %s meals ago",
 	"gui.solpotpie.food_book.queue.tooltip.last_eaten_label_singular": "Last eaten: %s meal ago",

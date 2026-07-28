@@ -30,8 +30,7 @@ spotless {
 	}
 }
 
-def full_mod_version = "${minecraft_version}-${mod_version}"
-version = full_mod_version
+version = mod_version
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17' // Need this here so eclipse task generates correctly.
 

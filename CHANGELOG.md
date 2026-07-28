@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+1. Added a "Hold shift for more" on some tooltips to reduce clutter once you eat a food for the first time.
+
+
 ## 2.0.0
 
 1. Added an in game chicken pot pie
