@@ -1,0 +1,63 @@
+Food groups live in this folder, one .json file per group. The file name is the group's id.
+This file is a .txt so it never gets loaded; copy it to <something>.json to start a new group.
+
+Every field is optional except "food". Delete anything you do not need.
+
+{
+  // Food included in the group.
+  "food": {
+    // Item tags, the modern replacement for the ore dictionary entries the 1.7.10 mod used.
+    // A leading # is allowed but not required. Tags no loaded mod provides are skipped
+    // silently, so it is safe to list tags for mods that may or may not be installed.
+    "tags": [
+      "forge:fruits",
+      "forge:berries"
+    ],
+    // Item ids. 1.20.1 has no metadata, so these are plain registry names.
+    "items": [
+      "minecraft:apple",
+      "minecraft:golden_apple"
+    ]
+  },
+
+  // Food excluded from the group, applied after "food". Same format.
+  // Optional.
+  "exclude": {
+    "items": [
+      "minecraft:enchanted_golden_apple"
+    ]
+  },
+
+  // The name shown in the tooltip. A translation key works here too.
+  // Optional; defaults to "foodgroup.solpotpie.<filename>".
+  "name": "Fruit",
+
+  // Optional; default true. A disabled group is not loaded at all.
+  "enabled": true,
+
+  // If true, the foods in this group are excluded from diminishing returns entirely,
+  // and the group does not count towards food variety.
+  // Optional; default false.
+  "blacklist": false,
+
+  // If true, the group is not shown in tooltips. Blacklist groups are always hidden.
+  // Optional; default false.
+  "hidden": false,
+
+  // Colour of the group name. Valid values:
+  //   black, dark_blue, dark_green, dark_aqua, dark_red, dark_purple, gold,
+  //   gray, dark_gray, blue, green, aqua, red, light_purple, yellow, white
+  // Optional; default gray.
+  "color": "gold"
+}
+
+How groups feed into diminishing returns, all set in config/solpotpie-common.toml:
+
+  foodGroupDiversityThreshold  While your recent meals cover this many distinct groups or
+                               fewer, diminishing returns apply. Cover more than this and
+                               they switch off completely, however often you repeat yourself.
+                               Set to 0 to take groups out of the picture.
+
+  useFoodGroupsAsWhitelists    If true, a food that is in no group at all is exempt from
+                               diminishing returns. If false, ungrouped foods diminish as
+                               usual and simply never add to your variety count.

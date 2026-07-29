@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.1.1
+
+1. Added food groups
+ - Groups are `.json` files in `config/solpotpie/`, one per group, matching item ids and item tags. Fruit, vegetables, meat, fish, grain, sweets, soups and foraged ship by default, so it works out of the box. See `_example.json.txt` for the format.
+ - `foodGroupDiversityThreshold` (default 5): while your recent meals cover this many distinct groups or fewer, diminishing returns apply as normal. Cover more and they switch off entirely, however much you repeat yourself. Eating widely is now the way out, not eating rarely. 0 ignores groups.
+ - `useFoodGroupsAsWhitelists` (default false): when on, a food in no group at all never diminishes. A group marked `"blacklist": true` always exempts its foods either way.
+
+2. Added a grace period for new characters
+ - `newPlayerFoodsEatenThreshold` (default 10): diminishing returns don't apply until your 11th food. Counted per player per world, survives death. 0 disables.
+
+3. Default changes (new configs only, existing ones are left alone)
+ - `queueSize` 128 -> 20. 
+ - `baseHeartCost` 10, or 6 if Hunger Overhauled is installed.
+
+4. Fixes
+ - Food groups now sync from the server, meaning AppleSkin previews on a server were corrected. 
+ - An empty or unreadable food group folder no longer switches diminishing returns off for the whole pack when `useFoodGroupsAsWhitelists` is on.
+
 ## 2.1.0
 1. Added a "Hold shift for more" on some tooltips to reduce clutter once you eat a food for the first time.
 

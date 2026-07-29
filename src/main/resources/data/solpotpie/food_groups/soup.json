@@ -1,0 +1,20 @@
+{
+  "name": "foodgroup.solpotpie.soup",
+  "color": "yellow",
+  "food": {
+    "tags": [
+      "forge:soup",
+      "forge:soups",
+      "forge:stew",
+      "forge:stews",
+      "forge:salad",
+      "forge:salads"
+    ],
+    "items": [
+      "minecraft:mushroom_stew",
+      "minecraft:beetroot_soup",
+      "minecraft:rabbit_stew",
+      "minecraft:suspicious_stew"
+    ]
+  }
+}

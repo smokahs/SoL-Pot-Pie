@@ -1,0 +1,26 @@
+{
+  "name": "foodgroup.solpotpie.sweets",
+  "color": "light_purple",
+  "food": {
+    "tags": [
+      "forge:dessert",
+      "forge:desserts",
+      "forge:cake",
+      "forge:cakes",
+      "forge:pie",
+      "forge:pies",
+      "forge:cookie",
+      "forge:cookies",
+      "forge:candy",
+      "forge:sweets"
+    ],
+    "items": [
+      "minecraft:cookie",
+      "minecraft:pumpkin_pie",
+      "minecraft:cake",
+      "minecraft:honey_bottle",
+      "solpotpie:pot_pie",
+      "farmersdelight:cake_slice"
+    ]
+  }
+}

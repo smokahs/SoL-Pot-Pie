@@ -1,0 +1,19 @@
+{
+  "name": "foodgroup.solpotpie.foraged",
+  "color": "dark_green",
+  "food": {
+    "tags": [
+      "forge:mushroom",
+      "forge:mushrooms",
+      "forge:nut",
+      "forge:nuts"
+    ],
+    "items": [
+      "minecraft:brown_mushroom",
+      "minecraft:red_mushroom",
+      "minecraft:rotten_flesh",
+      "minecraft:spider_eye",
+      "minecraft:poisonous_potato"
+    ]
+  }
+}

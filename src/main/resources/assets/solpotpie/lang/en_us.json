@@ -115,6 +115,18 @@
 	"config.solpotpie.diminishing_floor_saturation": "Diminished Saturation Floor",
 	"config.solpotpie.diminishing_recovery_val": "Diminishing Recovery Rate",
 	"config.solpotpie.queue_size": "Recent Food Queue Size",
+	"config.solpotpie.new_player_foods_eaten_threshold": "New Player Grace Period",
+	"config.solpotpie.food_group_diversity_threshold": "Food Group Variety Threshold",
+	"config.solpotpie.use_food_groups_as_whitelists": "Use Food Groups as Whitelists",
 	"config.solpotpie.should_forbidden_count": "Blacklisted Foods Take Queue Spots",
-	"config.solpotpie.limit_progression_to_survival": "Limit Progression to Survival"
+	"config.solpotpie.limit_progression_to_survival": "Limit Progression to Survival",
+
+	"foodgroup.solpotpie.fruit": "Fruit",
+	"foodgroup.solpotpie.vegetables": "Vegetables",
+	"foodgroup.solpotpie.meat": "Meat",
+	"foodgroup.solpotpie.fish": "Fish",
+	"foodgroup.solpotpie.grain": "Grain",
+	"foodgroup.solpotpie.sweets": "Sweets",
+	"foodgroup.solpotpie.soup": "Soups and Stews",
+	"foodgroup.solpotpie.foraged": "Foraged"
 }

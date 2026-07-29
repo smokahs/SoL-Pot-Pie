@@ -4,6 +4,7 @@ import io.github.smokahs.solpotpie.ConfigHandler;
 import io.github.smokahs.solpotpie.SOLPotPieConfig;
 import io.github.smokahs.solpotpie.api.FoodCapability;
 import io.github.smokahs.solpotpie.api.SOLPotPieAPI;
+import io.github.smokahs.solpotpie.foodgroups.FoodGroups;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.*;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +29,14 @@ public final class FoodList implements FoodCapability {
 
 	public record MealValues(int hunger, float saturation) {}
 
+	/** why a food is not diminishing right now, or NONE if it is. */
+	public enum DiminishingBlock {
+		NONE,
+		NEW_PLAYER,
+		EXEMPT_FOOD,
+		VARIED_DIET,
+	}
+
 	public static FoodList get(Player player) {
 		return (FoodList) player.getCapability(SOLPotPieAPI.foodCapability)
 			.orElseThrow(FoodListNotFoundException::new);
@@ -41,6 +50,8 @@ public final class FoodList implements FoodCapability {
 	@Nullable
 	private FoodInstance streakFood = null;
 	private int streak = 0;
+	private int cachedDistinctGroups = -1;
+	private int cachedGroupsGeneration = -1;
 
 	public FoodList() {}
 
@@ -137,6 +148,8 @@ public final class FoodList implements FoodCapability {
 			? FoodInstance.decode(tag.getString(NBT_KEY_STREAK_FOOD))
 			: null;
 		streak = streakFood == null ? 0 : tag.getInt(NBT_KEY_STREAK);
+
+		invalidateFoodGroups();
 	}
 
 	public void addFood(Item food, Map<FoodInstance, Integer> foodMap) {
@@ -178,6 +191,8 @@ public final class FoodList implements FoodCapability {
 			allTimeFoods.add(newlyEaten);
 			repeats.put(newlyEaten, carriedEats + 1);
 		}
+
+		invalidateFoodGroups();
 	}
 
 	private int effectiveEats(FoodInstance food) {
@@ -191,10 +206,48 @@ public final class FoodList implements FoodCapability {
 				* SOLPotPieConfig.diminishingRecoveryVal());
 		return (int) Math.round(priorEats * (1.0 - recovered));
 	}
+	public DiminishingBlock diminishingBlock(Item food) {
+		int graceThreshold = SOLPotPieConfig.newPlayerFoodsEatenThreshold();
+		if (graceThreshold > 0 && foodsEaten < graceThreshold) {
+			return DiminishingBlock.NEW_PLAYER;
+		}
+
+		if (FoodGroups.isExempt(food)) {
+			return DiminishingBlock.EXEMPT_FOOD;
+		}
+
+		int diversityThreshold = SOLPotPieConfig.foodGroupDiversityThreshold();
+		if (diversityThreshold > 0 && distinctFoodGroups() > diversityThreshold) {
+			return DiminishingBlock.VARIED_DIET;
+		}
+
+		return DiminishingBlock.NONE;
+	}
+
+	public int distinctFoodGroups() {
+		int generation = FoodGroups.generation();
+		if (cachedDistinctGroups >= 0 && cachedGroupsGeneration == generation) {
+			return cachedDistinctGroups;
+		}
+
+		List<Item> recent = new ArrayList<>(uniqueFoods.size());
+		for (FoodInstance food : uniqueFoods.keySet()) {
+			recent.add(food.getItem());
+		}
+
+		cachedDistinctGroups = FoodGroups.distinctGroups(recent);
+		cachedGroupsGeneration = generation;
+		return cachedDistinctGroups;
+	}
+
+	private void invalidateFoodGroups() {
+		cachedDistinctGroups = -1;
+	}
 
 	public MealValues diminish(Item food, int nutrition, float saturation) {
 		MealValues full = new MealValues(nutrition, saturation);
 		if (!SOLPotPieConfig.diminishingReturnsEnabled()) return full;
+		if (diminishingBlock(food) != DiminishingBlock.NONE) return full;
 
 		int priorEats = effectiveEats(new FoodInstance(food));
 		if (priorEats <= 0) return full;
@@ -305,6 +358,7 @@ public final class FoodList implements FoodCapability {
 		repeats.clear();
 		streakFood = null;
 		streak = 0;
+		invalidateFoodGroups();
 	}
 
 	public void clearRecent() {
@@ -312,6 +366,7 @@ public final class FoodList implements FoodCapability {
 		repeats.clear();
 		streakFood = null;
 		streak = 0;
+		invalidateFoodGroups();
 	}
 
 	public Set<FoodInstance> getEatenFoods() {

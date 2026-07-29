@@ -85,6 +85,13 @@ public final class FoodTracker {
 			return;
 		}
 
+		FoodList.DiminishingBlock block = foodList.diminishingBlock(food);
+		if (block != FoodList.DiminishingBlock.NONE) {
+			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: {} (eaten {} foods, {} food groups)",
+					food, block, foodList.getFoodsEaten(), foodList.distinctFoodGroups());
+			return;
+		}
+
 		FoodProperties properties = stack.getFoodProperties(player);
 		if (properties == null) {
 			SOLPotPie.LOGGER.debug("Diminishing returns skipped for {}: no food properties", food);

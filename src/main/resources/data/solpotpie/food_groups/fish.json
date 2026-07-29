@@ -1,0 +1,23 @@
+{
+  "name": "foodgroup.solpotpie.fish",
+  "color": "aqua",
+  "food": {
+    "tags": [
+      "forge:fish",
+      "forge:fishes",
+      "forge:raw_fish",
+      "forge:raw_fishes",
+      "forge:cooked_fish",
+      "forge:cooked_fishes",
+      "forge:seafood"
+    ],
+    "items": [
+      "minecraft:cod",
+      "minecraft:cooked_cod",
+      "minecraft:salmon",
+      "minecraft:cooked_salmon",
+      "minecraft:tropical_fish",
+      "minecraft:pufferfish"
+    ]
+  }
+}

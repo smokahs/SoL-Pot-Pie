@@ -1,0 +1,22 @@
+{
+  "name": "foodgroup.solpotpie.fruit",
+  "color": "red",
+  "food": {
+    "tags": [
+      "forge:fruit",
+      "forge:fruits",
+      "forge:berry",
+      "forge:berries",
+      "forge:raw_fruit"
+    ],
+    "items": [
+      "minecraft:apple",
+      "minecraft:golden_apple",
+      "minecraft:enchanted_golden_apple",
+      "minecraft:melon_slice",
+      "minecraft:glow_berries",
+      "minecraft:sweet_berries",
+      "minecraft:chorus_fruit"
+    ]
+  }
+}

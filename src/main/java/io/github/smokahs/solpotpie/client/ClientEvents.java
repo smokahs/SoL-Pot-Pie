@@ -3,6 +3,7 @@ package io.github.smokahs.solpotpie.client;
 import io.github.smokahs.solpotpie.SOLPotPie;
 import io.github.smokahs.solpotpie.Sync;
 import io.github.smokahs.solpotpie.book.FoodBook;
+import io.github.smokahs.solpotpie.foodgroups.FoodGroups;
 import io.github.smokahs.solpotpie.item.SOLPotPieItems;
 import io.github.smokahs.solpotpie.tracking.PackTotals;
 import net.minecraft.client.Minecraft;
@@ -39,5 +40,6 @@ public class ClientEvents {
 	public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
 		Sync.clear();
 		PackTotals.invalidate();
+		FoodGroups.clear();
 	}
 }

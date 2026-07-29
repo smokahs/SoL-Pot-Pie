@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -25,8 +26,22 @@ import java.util.regex.Pattern;
 @Mod.EventBusSubscriber(modid = SOLPotPie.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class SOLPotPieConfig
 {
+	private static final String HUNGER_OVERHAULED = "hungeroverhauled";
+
+	private static final double BASE_HEART_COST_DEFAULT = 10.0;
+	private static final double BASE_HEART_COST_HUNGER_OVERHAULED = 6.0;
+
 	private static String localizationPath(String path) {
 		return "config." + SOLPotPie.MOD_ID + "." + path;
+	}
+
+	/**
+	Whether Hunger Overhauled is present. Read while the config spec is built, which is early
+	enough that the mod list is worth a null check even though it should be up by then.
+	 */
+	private static boolean hasHungerOverhauled() {
+		ModList mods = ModList.get();
+		return mods != null && mods.isLoaded(HUNGER_OVERHAULED);
 	}
 
 	public static final Common COMMON;
@@ -142,6 +157,18 @@ public final class SOLPotPieConfig
 		return Sync.number(Sync.DIMINISHING_RECOVERY_VAL, COMMON.diminishingRecoveryVal.get());
 	}
 
+	public static int foodGroupDiversityThreshold() {
+		return Sync.integer(Sync.FOOD_GROUP_DIVERSITY_THRESHOLD, COMMON.foodGroupDiversityThreshold.get());
+	}
+
+	public static boolean useFoodGroupsAsWhitelists() {
+		return Sync.flag(Sync.USE_FOOD_GROUPS_AS_WHITELISTS, COMMON.useFoodGroupsAsWhitelists.get());
+	}
+
+	public static int newPlayerFoodsEatenThreshold() {
+		return Sync.integer(Sync.NEW_PLAYER_FOODS_EATEN_THRESHOLD, COMMON.newPlayerFoodsEatenThreshold.get());
+	}
+
 	public static class Common {
 		public final ConfigValue<List<? extends String>> blacklist;
 		public final ConfigValue<List<? extends String>> whitelist;
@@ -164,6 +191,9 @@ public final class SOLPotPieConfig
 		public final IntValue diminishingFloorHunger;
 		public final DoubleValue diminishingFloorSaturation;
 		public final DoubleValue diminishingRecoveryVal;
+		public final IntValue foodGroupDiversityThreshold;
+		public final BooleanValue useFoodGroupsAsWhitelists;
+		public final IntValue newPlayerFoodsEatenThreshold;
 
 		public final BooleanValue shouldForbiddenCount;
 
@@ -174,11 +204,16 @@ public final class SOLPotPieConfig
 
 			baseHeartCost = builder
 					.translation(localizationPath("base_heart_cost"))
-					.comment(" How many food score points the first heart costs.\n"
-							+" Eating a food for the FIRST time permanently adds its score to your lifetime points.\n"
-							+" Eating it again gives no further points.\n"
+					.comment(" How many food score points the first heart costs. Only the FIRST time you eat a\n"
+							+" food adds its score. Ships at " + BASE_HEART_COST_DEFAULT + ", or "
+									+ BASE_HEART_COST_HUNGER_OVERHAULED + " with Hunger Overhauled installed.\n"
+							+" Defaults apply only when this file is first written; installing it later changes nothing.\n"
 							+"\n")
-					.defineInRange("baseHeartCost", 10.0, 0.1, 10000.0);
+					.defineInRange("baseHeartCost",
+							hasHungerOverhauled()
+									? BASE_HEART_COST_HUNGER_OVERHAULED
+									: BASE_HEART_COST_DEFAULT,
+							0.1, 10000.0);
 
 			heartCostIncrement = builder
 					.translation(localizationPath("heart_cost_increment"))
@@ -281,8 +316,47 @@ public final class SOLPotPieConfig
 			queueSize = builder
 					.translation(localizationPath("queue_size"))
 					.comment("\n How many meals count as \"recent\" for diminishing returns and the food book queue.\n"
+							+" This is also how long a worn-out food takes to recover, since diminishingRecoveryVal\n"
+							+" spreads recovery across the whole queue. Keep it short enough that a food you stopped\n"
+							+" eating comes back within a reasonable number of meals.\n"
 							+"\n")
-					.defineInRange("queueSize", 128, 1, 1000);
+					.defineInRange("queueSize", 20, 1, 1000);
+
+			newPlayerFoodsEatenThreshold = builder
+					.translation(localizationPath("new_player_foods_eaten_threshold"))
+					.comment("\n How many foods a player has to eat in a world before diminishing returns start\n"
+							+" applying to them at all. Gives new characters a grace period to get set up before\n"
+							+" they have to think about variety. 0 disables the grace period.\n"
+							+" Counted per player per world, and not reset by death.\n"
+							+"\n")
+					.defineInRange("newPlayerFoodsEatenThreshold", 10, 0, 1000);
+
+			builder.pop();
+			builder.push("FoodGroups");
+
+			foodGroupDiversityThreshold = builder
+					.translation(localizationPath("food_group_diversity_threshold"))
+					.comment(" Food groups are defined by .json files in config/solpotpie/, one file per group.\n"
+							+" See config/solpotpie/_example.json.txt for the format. Groups take item ids and\n"
+							+" item tags, and a set is shipped by default so this works without any setup.\n"
+							+"\n"
+							+" While your recent meals cover this many DISTINCT food groups or fewer, diminishing\n"
+							+" returns apply as normal. Cover more groups than this and diminishing returns switch\n"
+							+" off entirely, however often you repeat yourself within those groups. Eating widely\n"
+							+" is therefore the way out of diminishing returns, rather than simply eating rarely.\n"
+							+" Set to 0 to ignore food groups and always apply diminishing returns.\n"
+							+"\n")
+					.defineInRange("foodGroupDiversityThreshold", 5, 0, 1000);
+
+			useFoodGroupsAsWhitelists = builder
+					.translation(localizationPath("use_food_groups_as_whitelists"))
+					.comment("\n If true, any food that belongs to no food group at all is excluded from diminishing\n"
+							+" returns, so only foods you have explicitly grouped can ever diminish.\n"
+							+" If false, ungrouped foods diminish as usual, they just never add to your variety\n"
+							+" count. Leave this off unless your food groups cover the whole pack.\n"
+							+" Either way, a group marked \"blacklist\" always exempts its foods.\n"
+							+"\n")
+					.define("useFoodGroupsAsWhitelists", false);
 
 			builder.pop();
 			builder.push("Filtering");

@@ -1,0 +1,31 @@
+{
+  "name": "foodgroup.solpotpie.meat",
+  "color": "dark_red",
+  "food": {
+    "tags": [
+      "forge:meat",
+      "forge:meats",
+      "forge:raw_meat",
+      "forge:raw_meats",
+      "forge:cooked_meat",
+      "forge:cooked_meats"
+    ],
+    "items": [
+      "minecraft:beef",
+      "minecraft:cooked_beef",
+      "minecraft:porkchop",
+      "minecraft:cooked_porkchop",
+      "minecraft:chicken",
+      "minecraft:cooked_chicken",
+      "minecraft:mutton",
+      "minecraft:cooked_mutton",
+      "minecraft:rabbit",
+      "minecraft:cooked_rabbit"
+    ]
+  },
+  "exclude": {
+    "items": [
+      "minecraft:rotten_flesh"
+    ]
+  }
+}

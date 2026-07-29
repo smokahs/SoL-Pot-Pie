@@ -1,0 +1,29 @@
+{
+  "name": "foodgroup.solpotpie.vegetables",
+  "color": "green",
+  "food": {
+    "tags": [
+      "forge:vegetable",
+      "forge:vegetables",
+      "forge:crops",
+      "forge:raw_vegetable"
+    ],
+    "items": [
+      "minecraft:carrot",
+      "minecraft:golden_carrot",
+      "minecraft:potato",
+      "minecraft:baked_potato",
+      "minecraft:beetroot",
+      "minecraft:dried_kelp"
+    ]
+  },
+  "exclude": {
+    "items": [
+      "minecraft:poisonous_potato",
+      "minecraft:wheat_seeds",
+      "minecraft:beetroot_seeds",
+      "minecraft:melon_seeds",
+      "minecraft:pumpkin_seeds"
+    ]
+  }
+}
