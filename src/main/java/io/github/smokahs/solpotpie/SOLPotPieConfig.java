@@ -240,28 +240,23 @@ public final class SOLPotPieConfig
 
 			scoreMultiplier = builder
 					.translation(localizationPath("score_multiplier"))
-					.comment(" Every food is scored from its own nutrition and saturation (no crafting recipe walk).\n"
-							+" saturation is counted once (nutrition x saturationModifier), then the score follows a\n"
-							+" curve: it ramps up linearly to an average of 5, and compresses logarithmically above\n"
-							+" that, so very filling foods can't run away with huge scores.\n"
-							+" This multiplier scales every score up or down.\n"
+					.comment(" Every food is scored from its own nutrition and saturation.\n"
 							+" Raise it if permanent hearts feel too slow to earn, lower it if too fast.\n"
 							+"\n")
 					.defineInRange("scoreMultiplier", 1.0, 0.1, 100.0);
 
 			maxScore = builder
 					.translation(localizationPath("max_score"))
-					.comment("\n Scores are clamped to this maximum.\n"
+					.comment("\n The maximum score a single food can contribute to lifetime point total.\n"
 							+"\n")
 					.defineInRange("maxScore", 10.0, 1.0, 1000.0);
 
 			scoreOverrides = builder
 					.translation(localizationPath("score_overrides"))
-					.comment("\n Override the automatically computed score of individual foods here.\n"
-							+" Use this to hand-tune special or modded foods whose nutrition-based score doesn't fit.\n"
+					.comment("\n Use this to hand-tune special or modded foods whose nutrition-based score doesn't fit.\n"
 							+" Each entry is a string of the form [registry name],[score]\n"
 							+" e.g. \"minecraft:enchanted_golden_apple,10\"\n"
-							+" Note that tags are NOT currently supported.\n"
+							+" tags are NOT supported.\n"
 							+"\n")
 					.defineList("scoreOverrides", Lists.newArrayList(
 									"minecraft:enchanted_golden_apple,10"),
@@ -336,14 +331,10 @@ public final class SOLPotPieConfig
 
 			foodGroupDiversityThreshold = builder
 					.translation(localizationPath("food_group_diversity_threshold"))
-					.comment(" Food groups are defined by .json files in config/solpotpie/, one file per group.\n"
-							+" See config/solpotpie/_example.json.txt for the format. Groups take item ids and\n"
-							+" item tags, and a set is shipped by default so this works without any setup.\n"
+					.comment(" While your recent meals cover this^ many DISTINCT food groups or fewer, diminishing\n"
+							+" returns apply as normal. Cover more groups than this^ and diminishing returns get turned\n"
+							+" off entirely.\n"
 							+"\n"
-							+" While your recent meals cover this many DISTINCT food groups or fewer, diminishing\n"
-							+" returns apply as normal. Cover more groups than this and diminishing returns switch\n"
-							+" off entirely, however often you repeat yourself within those groups. Eating widely\n"
-							+" is therefore the way out of diminishing returns, rather than simply eating rarely.\n"
 							+" Set to 0 to ignore food groups and always apply diminishing returns.\n"
 							+"\n")
 					.defineInRange("foodGroupDiversityThreshold", 5, 0, 1000);
