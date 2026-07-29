@@ -159,7 +159,7 @@ public final class FoodGroups {
 		}
 	}
 
-	
+
 	public static CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
 		for (Map.Entry<String, String> entry : definitions.entrySet()) {
