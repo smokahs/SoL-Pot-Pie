@@ -1,6 +1,7 @@
 package io.github.smokahs.solpotpie.item;
 
 import io.github.smokahs.solpotpie.SOLPotPie;
+import io.github.smokahs.solpotpie.SOLPotPieConfig;
 import io.github.smokahs.solpotpie.item.foodcontainer.FoodContainerItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -23,11 +24,11 @@ public final class SOLPotPieItems
 	public static final RegistryObject<Item> FOOD_BOOK =
 			ITEMS.register("food_book", FoodBookItem::new);
 	public static final RegistryObject<Item> LUNCHBOX =
-			ITEMS.register("lunchbox", () -> new FoodContainerItem(9, "lunchbox"));
+			ITEMS.register("lunchbox", () -> new FoodContainerItem(SOLPotPieConfig::lunchboxSlots, "lunchbox"));
 	public static final RegistryObject<Item> LUNCHBAG =
-			ITEMS.register("lunchbag", () -> new FoodContainerItem(5, "lunchbag"));
+			ITEMS.register("lunchbag", () -> new FoodContainerItem(SOLPotPieConfig::lunchbagSlots, "lunchbag"));
 	public static final RegistryObject<Item> GOLDEN_LUNCHBOX =
-			ITEMS.register("golden_lunchbox", () -> new FoodContainerItem(14, "golden_lunchbox"));
+			ITEMS.register("golden_lunchbox", () -> new FoodContainerItem(SOLPotPieConfig::goldenLunchboxSlots, "golden_lunchbox"));
 	public static final RegistryObject<Item> POT_PIE =
 			ITEMS.register("pot_pie", () -> new Item(new Item.Properties()
 					.stacksTo(16)

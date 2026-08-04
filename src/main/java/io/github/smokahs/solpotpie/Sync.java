@@ -27,6 +27,9 @@ public final class Sync {
 	public static final String USE_FOOD_GROUPS_AS_WHITELISTS = "use_food_groups_as_whitelists";
 	public static final String NEW_PLAYER_FOODS_EATEN_THRESHOLD = "new_player_foods_eaten_threshold";
 	public static final String SHOULD_FORBIDDEN_COUNT = "should_forbidden_count";
+	public static final String LUNCHBAG_SLOTS = "lunchbag_slots";
+	public static final String LUNCHBOX_SLOTS = "lunchbox_slots";
+	public static final String GOLDEN_LUNCHBOX_SLOTS = "golden_lunchbox_slots";
 	public static final String BLACKLIST = "blacklist";
 	public static final String WHITELIST = "whitelist";
 
@@ -61,6 +64,10 @@ public final class Sync {
 		tag.putInt(FOOD_GROUP_DIVERSITY_THRESHOLD, common.foodGroupDiversityThreshold.get());
 		tag.putBoolean(USE_FOOD_GROUPS_AS_WHITELISTS, common.useFoodGroupsAsWhitelists.get());
 		tag.putInt(NEW_PLAYER_FOODS_EATEN_THRESHOLD, common.newPlayerFoodsEatenThreshold.get());
+
+		tag.putInt(LUNCHBAG_SLOTS, common.lunchbagSlots.get());
+		tag.putInt(LUNCHBOX_SLOTS, common.lunchboxSlots.get());
+		tag.putInt(GOLDEN_LUNCHBOX_SLOTS, common.goldenLunchboxSlots.get());
 
 		tag.putBoolean(SHOULD_FORBIDDEN_COUNT, common.shouldForbiddenCount.get());
 		tag.put(BLACKLIST, strings(common.blacklist.get()));

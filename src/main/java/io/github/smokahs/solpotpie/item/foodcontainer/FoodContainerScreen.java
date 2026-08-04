@@ -28,7 +28,8 @@ public class FoodContainerScreen extends AbstractContainerScreen<FoodContainer> 
 		this.menu.containerItem.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
 			int slotsPerRow = h.getSlots();
 			if (h.getSlots() > 9) {
-				slotsPerRow = h.getSlots() / 2;
+				// ceil so odd counts stay within two rows, matches FoodContainer
+				slotsPerRow = (h.getSlots() + 1) / 2;
 			}
 			int xStart = (2*8 + 9*18 - slotsPerRow * 18) / 2;
 			int yStart = 17 + 18;

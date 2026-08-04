@@ -1,6 +1,7 @@
 package io.github.smokahs.solpotpie.item.foodcontainer;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
@@ -18,6 +19,19 @@ public class FoodContainerCapabilityProvider implements ICapabilitySerializable<
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 			return !(stack.getItem() instanceof FoodContainerItem) && super.isItemValid(slot, stack);
+		}
+
+		@Override
+		public void deserializeNBT(CompoundTag nbt) {
+			// saved "Size" wins in super; force configured size, keep what fits
+			super.deserializeNBT(nbt);
+			if (getSlots() != slots) {
+				NonNullList<ItemStack> saved = stacks;
+				setSize(slots);
+				for (int i = 0; i < Math.min(saved.size(), slots); i++) {
+					stacks.set(i, saved.get(i));
+				}
+			}
 		}
 	});
 

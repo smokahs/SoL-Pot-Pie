@@ -38,7 +38,8 @@ public class FoodContainer extends AbstractContainerMenu {
 			nslots = h.getSlots();
 			int slotsPerRow = h.getSlots();
 			if (h.getSlots() > 9) {
-				slotsPerRow = h.getSlots() / 2;
+				// ceil so odd counts stay within two rows
+				slotsPerRow = (h.getSlots() + 1) / 2;
 			}
 			int xStart = (2*8 + 9*18 - slotsPerRow * 18) / 2;
 			int yStart = 17 + 18;

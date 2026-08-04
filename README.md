@@ -21,7 +21,7 @@ Requires [Patchouli](https://www.curseforge.com/minecraft/mc-mods/patchouli) and
 ## In-game items
 
 - **Food Book:** craft it from a book and a pot pie (use a keybind if its in your inventory!) to see your full record: buttons down the left page, and live detail on the right for whichever one you're hovering. Click through for hearts earned, lifetime points, points until your next heart, how much of the pack you have tasted, and the foods you've eaten recently.
-- **Lunchbag / Lunchbox / Golden Lunchbox:** food storage that holds 5 / 9 / 14 stacks.
+- **Lunchbag / Lunchbox / Golden Lunchbox:** food storage that holds 5 / 9 / 14 stacks by default; each size is configurable from 0 to 14 slots.
 - **Pot Pie:** a hearty meal. Cooked in [Farmer's Delight](https://www.curseforge.com/minecraft/mc-mods/farmers-delight)'s cooking pot from a pie crust, two cooked chicken cuts, an onion, a carrot and a potato; without Farmer's Delight installed it has a vanilla crafting recipe instead.
 
 ## Changelog
@@ -41,6 +41,7 @@ Config generates **globally** at `config/solpotpie-common.toml`, so a pack can s
 | **Scoring** | Score multiplier, max score, per-food score overrides |
 | **DiminishingReturns** | Toggle, eats until a food bottoms out, hunger/saturation floors, recovery rate, recent-food queue size |
 | **Filtering** | Blacklist / whitelist, whether blacklisted foods still fill queue slots |
+| **Lunchboxes** | Slot counts for the lunchbag / lunchbox / golden lunchbox (0-14 each) |
 | **Miscellaneous** | Reset recent foods on death, limit progression to survival mode |
 | **Client** | Food tooltip toggle, hide values until eaten |
 

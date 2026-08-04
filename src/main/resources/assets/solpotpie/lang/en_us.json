@@ -119,6 +119,9 @@
 	"config.solpotpie.food_group_diversity_threshold": "Food Group Variety Threshold",
 	"config.solpotpie.use_food_groups_as_whitelists": "Use Food Groups as Whitelists",
 	"config.solpotpie.should_forbidden_count": "Blacklisted Foods Take Queue Spots",
+	"config.solpotpie.lunchbag_slots": "Lunchbag Slots",
+	"config.solpotpie.lunchbox_slots": "Lunchbox Slots",
+	"config.solpotpie.golden_lunchbox_slots": "Golden Lunchbox Slots",
 	"config.solpotpie.limit_progression_to_survival": "Limit Progression to Survival",
 
 	"foodgroup.solpotpie.fruit": "Fruit",

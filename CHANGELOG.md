@@ -1,6 +1,15 @@
 # Changelog
 
-## 2.1.1
+## 2.2.1
+
+1. Lunchbox slot counts are now configurable
+ - New `Lunchboxes` config section: `lunchbagSlots` (default 5), `lunchboxSlots` (default 9), `goldenLunchboxSlots` (default 14). Each ranges 0-14, the most the GUI fits.
+ - Values sync from the server. Existing containers resize on next reload; shrinking a container voids items past the new size, so empty them first.
+
+2. Fixes
+ - Containers configured to an odd slot count above 9 no longer draw a third slot row on top of the player inventory.
+
+## 2.2.0
 
 1. Added food groups
  - Groups are `.json` files in `config/solpotpie/`, one per group, matching item ids and item tags. Fruit, vegetables, meat, fish, grain, sweets, soups and foraged ship by default, so it works out of the box. See `_example.json.txt` for the format.

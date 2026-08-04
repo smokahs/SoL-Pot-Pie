@@ -19,16 +19,17 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class FoodContainerItem extends Item {
-	private String displayName;
-	private int nslots;
+	private final String displayName;
+	private final Supplier<Integer> slotCount;
 
-	public FoodContainerItem(int nslots, String displayName) {
+	public FoodContainerItem(Supplier<Integer> slotCount, String displayName) {
 		super(new Properties().stacksTo(1).setNoRepair());
 
 		this.displayName = displayName;
-		this.nslots = nslots;
+		this.slotCount = slotCount;
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class FoodContainerItem extends Item {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new FoodContainerCapabilityProvider(stack, nslots);
+		return new FoodContainerCapabilityProvider(stack, slotCount.get());
 	}
 
 	@Nullable

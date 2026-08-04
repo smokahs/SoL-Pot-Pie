@@ -31,6 +31,9 @@ public final class SOLPotPieConfig
 	private static final double BASE_HEART_COST_DEFAULT = 10.0;
 	private static final double BASE_HEART_COST_HUNGER_OVERHAULED = 6.0;
 
+	// two rows of 7 is all the container GUI fits
+	public static final int MAX_CONTAINER_SLOTS = 14;
+
 	private static String localizationPath(String path) {
 		return "config." + SOLPotPie.MOD_ID + "." + path;
 	}
@@ -169,6 +172,18 @@ public final class SOLPotPieConfig
 		return Sync.integer(Sync.NEW_PLAYER_FOODS_EATEN_THRESHOLD, COMMON.newPlayerFoodsEatenThreshold.get());
 	}
 
+	public static int lunchbagSlots() {
+		return Sync.integer(Sync.LUNCHBAG_SLOTS, COMMON.lunchbagSlots.get());
+	}
+
+	public static int lunchboxSlots() {
+		return Sync.integer(Sync.LUNCHBOX_SLOTS, COMMON.lunchboxSlots.get());
+	}
+
+	public static int goldenLunchboxSlots() {
+		return Sync.integer(Sync.GOLDEN_LUNCHBOX_SLOTS, COMMON.goldenLunchboxSlots.get());
+	}
+
 	public static class Common {
 		public final ConfigValue<List<? extends String>> blacklist;
 		public final ConfigValue<List<? extends String>> whitelist;
@@ -196,6 +211,10 @@ public final class SOLPotPieConfig
 		public final IntValue newPlayerFoodsEatenThreshold;
 
 		public final BooleanValue shouldForbiddenCount;
+
+		public final IntValue lunchbagSlots;
+		public final IntValue lunchboxSlots;
+		public final IntValue goldenLunchboxSlots;
 
 		public final ConfigValue<List<? extends String>> scoreOverrides;
 
@@ -370,6 +389,25 @@ public final class SOLPotPieConfig
 							+" even though they don't give any points.\n"
 							+"\n")
 					.define("shouldForbiddenCount", true);
+
+			builder.pop();
+			builder.push("Lunchboxes");
+
+			lunchbagSlots = builder
+					.translation(localizationPath("lunchbag_slots"))
+					.comment(" Food slots per container, 0-" + MAX_CONTAINER_SLOTS + ".\n"
+							+" Existing containers resize when their stack next loads; shrinking voids\n"
+							+" whatever sat past the new size.\n"
+							+"\n")
+					.defineInRange("lunchbagSlots", 5, 0, MAX_CONTAINER_SLOTS);
+
+			lunchboxSlots = builder
+					.translation(localizationPath("lunchbox_slots"))
+					.defineInRange("lunchboxSlots", 9, 0, MAX_CONTAINER_SLOTS);
+
+			goldenLunchboxSlots = builder
+					.translation(localizationPath("golden_lunchbox_slots"))
+					.defineInRange("goldenLunchboxSlots", 14, 0, MAX_CONTAINER_SLOTS);
 
 			builder.pop();
 			builder.push("Miscellaneous");
