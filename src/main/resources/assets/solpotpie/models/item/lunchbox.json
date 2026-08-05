@@ -2,5 +2,9 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "solpotpie:item/lunchbox"
-  }
+  },
+  "overrides": [
+    { "predicate": { "solpotpie:open": 0.5 }, "model": "solpotpie:item/lunchbox_open_empty" },
+    { "predicate": { "solpotpie:open": 1.0 }, "model": "solpotpie:item/lunchbox_open_full" }
+  ]
 }

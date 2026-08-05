@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "solpotpie:item/lunchbag_open_empty"
+  }
+}

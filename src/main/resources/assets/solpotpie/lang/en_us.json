@@ -60,7 +60,7 @@
 	"gui.solpotpie.food_book.entry.recent_foods.title": "Diminishing Returns",
 	"gui.solpotpie.food_book.entry.recent_foods.text": "Foods on this list restore $(#a0522d)less hunger and saturation$(). The $(l)more times$() you eat one, the weaker it gets, until it bottoms out at a flat $(#a0522d)scrap of a meal$() no matter how filling it started. $(br2)Eating other things wears the penalty back off, so $(o)keep your diet varied.$()",
 	"gui.solpotpie.food_book.entry.lunchboxes": "Lunchboxes",
-	"gui.solpotpie.food_book.entry.lunchboxes.text": "$(l)Sneak and right click$() a lunchbox to open it, $(l)right click$() to eat from it. $(br2)It always picks the best food inside for you: something you have $(#a0522d)never tasted$() first, then whatever you have gone $(#a0522d)longest without$().",
+	"gui.solpotpie.food_book.entry.lunchboxes.text": "$(l)Right click$() a closed lunchbox to unpack it and fill it with food. Once open, $(l)right click$() eats straight from it, and $(l)sneak and right click$() packs it back up. You cannot eat from a $(#a0522d)closed$() lunchbox. $(br2)$(l)Right click a chest$() with an open lunchbox to restock: it empties into the chest, then takes back the best assortment. $(br2)It always picks the best food inside for you: something you have $(#a0522d)never tasted$() first, then whatever you have gone $(#a0522d)longest without$().",
 	"gui.solpotpie.food_book.entry.lunchboxes.golden_text": "The golden lunchbox holds $(l)fourteen$() stacks of food.",
 	"gui.solpotpie.food_book.stats": "Overview",
 	"gui.solpotpie.food_book.stats.hearts": "Hearts",

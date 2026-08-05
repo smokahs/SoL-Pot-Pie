@@ -4,9 +4,12 @@ import io.github.smokahs.solpotpie.client.ContainerScreenRegistry;
 import io.github.smokahs.solpotpie.communication.ConfigMessage;
 import io.github.smokahs.solpotpie.communication.FoodListMessage;
 import io.github.smokahs.solpotpie.item.SOLPotPieItems;
+import io.github.smokahs.solpotpie.item.foodcontainer.FoodContainerItem;
 import io.github.smokahs.solpotpie.item.foodcontainer.FoodContainerScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -63,7 +66,17 @@ public final class SOLPotPie
 
 	@SubscribeEvent
 	public static void setupClient(FMLClientSetupEvent event) {
-		event.enqueueWork(() -> { MenuScreens.register(ContainerScreenRegistry.FOOD_CONTAINER.get(), FoodContainerScreen::new); });
+		event.enqueueWork(() -> {
+			MenuScreens.register(ContainerScreenRegistry.FOOD_CONTAINER.get(), FoodContainerScreen::new);
+
+			ClampedItemPropertyFunction openState = (stack, level, entity, seed) -> {
+				if (!FoodContainerItem.isOpen(stack)) return 0.0F;
+				return FoodContainerItem.hasFood(stack) ? 1.0F : 0.5F;
+			};
+			ItemProperties.register(SOLPotPieItems.LUNCHBAG.get(), resourceLocation("open"), openState);
+			ItemProperties.register(SOLPotPieItems.LUNCHBOX.get(), resourceLocation("open"), openState);
+			ItemProperties.register(SOLPotPieItems.GOLDEN_LUNCHBOX.get(), resourceLocation("open"), openState);
+		});
 
 		if (ModList.get().isLoaded("appleskin")) {
 			MinecraftForge.EVENT_BUS.register(io.github.smokahs.solpotpie.integration.AppleSkinCompat.class);

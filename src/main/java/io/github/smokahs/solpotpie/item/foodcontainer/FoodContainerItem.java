@@ -6,22 +6,34 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class FoodContainerItem extends Item {
+	private static final String TAG_OPEN = "open";
+
 	private final String displayName;
 	private final Supplier<Integer> slotCount;
 
@@ -44,14 +56,150 @@ public class FoodContainerItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-		if (!world.isClientSide && player.isCrouching()) {
-			NetworkHooks.openScreen((ServerPlayer) player, new FoodContainerProvider(displayName), player.blockPosition());
+		ItemStack stack = player.getItemInHand(hand);
+
+		if (player.isCrouching()) {
+			if (!world.isClientSide) {
+				boolean nowOpen = !isOpen(stack);
+				setOpen(stack, nowOpen);
+				world.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER,
+						SoundSource.PLAYERS, 0.7F, nowOpen ? 1.2F : 0.8F);
+			}
+			return InteractionResultHolder.sidedSuccess(stack, world.isClientSide);
 		}
 
-		if (!player.isCrouching()) {
+		if (isOpen(stack)) {
 			return processRightClick(world, player, hand);
 		}
-		return InteractionResultHolder.pass(player.getItemInHand(hand));
+
+		if (!world.isClientSide) {
+			NetworkHooks.openScreen((ServerPlayer) player, new FoodContainerProvider(displayName), player.blockPosition());
+			setOpen(stack, true);
+		}
+		return InteractionResultHolder.sidedSuccess(stack, world.isClientSide);
+	}
+
+	@Override
+	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+		if (!isOpen(stack)) {
+			return InteractionResult.PASS;
+		}
+
+		Level world = context.getLevel();
+		Player player = context.getPlayer();
+		BlockEntity blockEntity = world.getBlockEntity(context.getClickedPos());
+		if (player == null || blockEntity == null) {
+			return InteractionResult.PASS;
+		}
+
+		IItemHandler target = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, context.getClickedFace())
+				.resolve().orElse(null);
+		if (target == null) {
+			return InteractionResult.PASS;
+		}
+
+		if (!world.isClientSide) {
+			ItemStackHandler container = getInventory(stack);
+			if (container != null) {
+				boolean moved = dumpFoodInto(container, target);
+				moved |= pullBestFoodFrom(container, target, player);
+				if (moved) {
+					world.playSound(null, context.getClickedPos(), SoundEvents.BUNDLE_INSERT,
+							SoundSource.PLAYERS, 0.8F, 1.0F);
+				}
+			}
+		}
+		return InteractionResult.sidedSuccess(world.isClientSide);
+	}
+
+	private static boolean dumpFoodInto(ItemStackHandler container, IItemHandler target) {
+		boolean moved = false;
+		for (int i = 0; i < container.getSlots(); i++) {
+			ItemStack stackInSlot = container.getStackInSlot(i);
+			if (stackInSlot.isEmpty()) {
+				continue;
+			}
+			ItemStack remainder = ItemHandlerHelper.insertItemStacked(target, stackInSlot, false);
+			if (remainder.getCount() != stackInSlot.getCount()) {
+				container.setStackInSlot(i, remainder);
+				moved = true;
+			}
+		}
+		return moved;
+	}
+
+	private static boolean pullBestFoodFrom(ItemStackHandler container, IItemHandler target, Player player) {
+		FoodList foodList = FoodList.get(player);
+		List<Integer> foodSlots = new ArrayList<>();
+		for (int i = 0; i < target.getSlots(); i++) {
+			if (target.getStackInSlot(i).isEdible()) {
+				foodSlots.add(i);
+			}
+		}
+		foodSlots.sort(Comparator.comparingDouble(slot -> -foodList.rankFood(target.getStackInSlot(slot).getItem())));
+
+		boolean moved = false;
+		for (int slotNum : foodSlots) {
+			ItemStack available = target.extractItem(slotNum, target.getStackInSlot(slotNum).getMaxStackSize(), true);
+			if (available.isEmpty() || !available.isEdible()) {
+				continue;
+			}
+			int accepted = insertOnce(container, available, true);
+			if (accepted <= 0) {
+				continue;
+			}
+			ItemStack extracted = target.extractItem(slotNum, accepted, false);
+			if (extracted.isEmpty()) {
+				continue;
+			}
+			int inserted = insertOnce(container, extracted, false);
+			if (inserted < extracted.getCount()) {
+				ItemStack leftover = extracted.copyWithCount(extracted.getCount() - inserted);
+				if (!player.getInventory().add(leftover)) {
+					player.drop(leftover, false);
+				}
+			}
+			moved = true;
+		}
+		return moved;
+	}
+
+	private static int insertOnce(ItemStackHandler container, ItemStack stack, boolean simulate) {
+		int slot = -1;
+		for (int i = 0; i < container.getSlots(); i++) {
+			ItemStack existing = container.getStackInSlot(i);
+			if (!existing.isEmpty() && ItemHandlerHelper.canItemStacksStack(existing, stack)
+					&& existing.getCount() < Math.min(existing.getMaxStackSize(), container.getSlotLimit(i))) {
+				slot = i;
+				break;
+			}
+		}
+		if (slot < 0) {
+			for (int i = 0; i < container.getSlots(); i++) {
+				if (container.getStackInSlot(i).isEmpty() && container.isItemValid(i, stack)) {
+					slot = i;
+					break;
+				}
+			}
+		}
+		if (slot < 0) {
+			return 0;
+		}
+		ItemStack remainder = container.insertItem(slot, stack, simulate);
+		return stack.getCount() - remainder.getCount();
+	}
+
+	public static boolean isOpen(ItemStack stack) {
+		CompoundTag tag = stack.getTag();
+		return tag != null && tag.getBoolean(TAG_OPEN);
+	}
+
+	public static void setOpen(ItemStack stack, boolean open) {
+		stack.getOrCreateTag().putBoolean(TAG_OPEN, open);
+	}
+
+	public static boolean hasFood(ItemStack stack) {
+		return !isInventoryEmpty(stack);
 	}
 
 	private InteractionResultHolder<ItemStack> processRightClick(Level world, Player player, InteractionHand hand) {

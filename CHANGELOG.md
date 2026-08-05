@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.0
+
+1. Lunchboxes now open and close, like the old spice of life edition
+ - Right click a closed container to open its inventory. Sneak and right click toggles it open or closed.
+ - Eating only works while open: an open container eats the best food inside.
+ - Right clicking a chest (or any inventory block) with an open container restocks it: contents dump into the chest, then it pulls back the best assortment, ranked by what you have never tasted and gone longest without. Each food takes at most one slot to keep the mix varied. Closed containers open the chest as normal.
+
 ## 2.2.1
 
 1. Lunchbox slot counts are now configurable
