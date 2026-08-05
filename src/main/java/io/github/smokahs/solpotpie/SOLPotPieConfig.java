@@ -160,6 +160,14 @@ public final class SOLPotPieConfig
 		return Sync.number(Sync.DIMINISHING_RECOVERY_VAL, COMMON.diminishingRecoveryVal.get());
 	}
 
+	public static boolean diminishingEatsToFloorAddsNutrition() {
+		return Sync.flag(Sync.DIMINISHING_EATS_ADD_NUTRITION, COMMON.diminishingEatsToFloorAddsNutrition.get());
+	}
+
+	public static boolean diminishedEatTimeScaling() {
+		return Sync.flag(Sync.DIMINISHED_EAT_TIME_SCALING, COMMON.diminishedEatTimeScaling.get());
+	}
+
 	public static int foodGroupDiversityThreshold() {
 		return Sync.integer(Sync.FOOD_GROUP_DIVERSITY_THRESHOLD, COMMON.foodGroupDiversityThreshold.get());
 	}
@@ -206,6 +214,8 @@ public final class SOLPotPieConfig
 		public final IntValue diminishingFloorHunger;
 		public final DoubleValue diminishingFloorSaturation;
 		public final DoubleValue diminishingRecoveryVal;
+		public final BooleanValue diminishingEatsToFloorAddsNutrition;
+		public final BooleanValue diminishedEatTimeScaling;
 		public final IntValue foodGroupDiversityThreshold;
 		public final BooleanValue useFoodGroupsAsWhitelists;
 		public final IntValue newPlayerFoodsEatenThreshold;
@@ -326,6 +336,22 @@ public final class SOLPotPieConfig
 					.comment("\n Saturation a food restores once it has bottomed out. Also a flat amount.\n"
 							+"\n")
 					.defineInRange("diminishingFloorSaturation", 0.5, 0.0, 20.0);
+
+			diminishingEatsToFloorAddsNutrition = builder
+					.translation(localizationPath("diminishing_eats_to_floor_adds_nutrition"))
+					.comment("\n If true, a food's own hunger value is added to diminishingEatsToFloor, so junk\n"
+							+" food bottoms out after a couple of eats while filling food holds value longer.\n"
+							+" For the old 1.7.10 editions' feel, pair with floors of 0 and recovery 0.0.\n"
+							+"\n")
+					.define("diminishingEatsToFloorAddsNutrition", false);
+
+			diminishedEatTimeScaling = builder
+					.translation(localizationPath("diminished_eat_time_scaling"))
+					.comment("\n If true, worn-out foods take longer to eat: eating time is divided by the\n"
+							+" food's current fraction of its full hunger, uncapped. Half value chews twice\n"
+							+" as long, and a food bottomed out at 0 hunger is effectively uneatable.\n"
+							+"\n")
+					.define("diminishedEatTimeScaling", false);
 
 			queueSize = builder
 					.translation(localizationPath("queue_size"))

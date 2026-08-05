@@ -253,6 +253,9 @@ public final class FoodList implements FoodCapability {
 		if (priorEats <= 0) return full;
 
 		int eatsToFloor = Math.max(2, SOLPotPieConfig.diminishingEatsToFloor());
+		if (SOLPotPieConfig.diminishingEatsToFloorAddsNutrition()) {
+			eatsToFloor += Math.max(0, nutrition);
+		}
 		double slide = Math.min(1.0, priorEats / (double) (eatsToFloor - 1));
 
 		int floorHunger = SOLPotPieConfig.diminishingFloorHunger();

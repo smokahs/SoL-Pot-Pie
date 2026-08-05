@@ -34,16 +34,40 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class FoodTracker {
 	private static final Map<UUID, float[]> PRE_EAT_STATS = new ConcurrentHashMap<>();
 
+	private static final int FLOOR_ZERO_EAT_DURATION = 24000;
+
 	@SubscribeEvent
 	public static void onUseItemStart(LivingEntityUseItemEvent.Start event) {
-		if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 
 		ItemStack stack = event.getItem();
 		if (!stack.isEdible()) return;
 
+		scaleEatTime(event, player, stack);
+
+		if (player.level().isClientSide) return;
+
 		FoodData foodData = player.getFoodData();
 		PRE_EAT_STATS.put(player.getUUID(),
 				new float[]{foodData.getFoodLevel(), foodData.getSaturationLevel()});
+	}
+
+	private static void scaleEatTime(LivingEntityUseItemEvent.Start event, Player player, ItemStack stack) {
+		if (!SOLPotPieConfig.diminishedEatTimeScaling()) return;
+		if (stack.getItem() instanceof FoodContainerItem) return;
+
+		FoodProperties properties = stack.getFoodProperties(player);
+		if (properties == null || properties.getNutrition() <= 0) return;
+
+		FoodList.MealValues meal = FoodList.get(player).diminish(stack.getItem(), properties.getNutrition(),
+				properties.getNutrition() * properties.getSaturationModifier() * 2.0F);
+		if (meal.hunger() >= properties.getNutrition()) return;
+
+		if (meal.hunger() <= 0) {
+			event.setDuration(FLOOR_ZERO_EAT_DURATION);
+			return;
+		}
+		event.setDuration(event.getDuration() * properties.getNutrition() / meal.hunger());
 	}
 
 	@SubscribeEvent

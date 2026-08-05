@@ -7,6 +7,11 @@
  - Eating only works while open: an open container eats the best food inside.
  - Right clicking a chest (or any inventory block) with an open container restocks it: contents dump into the chest, then it pulls back the best assortment, ranked by what you have never tasted and gone longest without. Each food takes at most one slot to keep the mix varied. Closed containers open the chest as normal.
 
+2. Two optional diminishing returns mechanics from the old 1.7.10 editions (both off by default)
+ - `diminishingEatsToFloorAddsNutrition`: a food's own hunger value is added to `diminishingEatsToFloor`, so junk food bottoms out after a couple of eats while filling food holds value longer.
+ - `diminishedEatTimeScaling`: worn-out foods take longer to eat, eating time divided by the food's current fraction of its full hunger, uncapped. A food at the floor of 0 hunger is effectively uneatable.
+ - GTNH values: both true, `diminishingFloorHunger` 0, `diminishingFloorSaturation` 0, `diminishingRecoveryVal` 0.0, `diminishingEatsToFloor` 8.
+
 ## 2.2.1
 
 1. Lunchbox slot counts are now configurable

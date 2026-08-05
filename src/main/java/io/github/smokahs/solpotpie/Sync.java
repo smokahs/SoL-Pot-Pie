@@ -23,6 +23,8 @@ public final class Sync {
 	public static final String DIMINISHING_FLOOR_HUNGER = "diminishing_floor_hunger";
 	public static final String DIMINISHING_FLOOR_SATURATION = "diminishing_floor_saturation";
 	public static final String DIMINISHING_RECOVERY_VAL = "diminishing_recovery_val";
+	public static final String DIMINISHING_EATS_ADD_NUTRITION = "diminishing_eats_add_nutrition";
+	public static final String DIMINISHED_EAT_TIME_SCALING = "diminished_eat_time_scaling";
 	public static final String FOOD_GROUP_DIVERSITY_THRESHOLD = "food_group_diversity_threshold";
 	public static final String USE_FOOD_GROUPS_AS_WHITELISTS = "use_food_groups_as_whitelists";
 	public static final String NEW_PLAYER_FOODS_EATEN_THRESHOLD = "new_player_foods_eaten_threshold";
@@ -61,6 +63,8 @@ public final class Sync {
 		tag.putInt(DIMINISHING_FLOOR_HUNGER, common.diminishingFloorHunger.get());
 		tag.putDouble(DIMINISHING_FLOOR_SATURATION, common.diminishingFloorSaturation.get());
 		tag.putDouble(DIMINISHING_RECOVERY_VAL, common.diminishingRecoveryVal.get());
+		tag.putBoolean(DIMINISHING_EATS_ADD_NUTRITION, common.diminishingEatsToFloorAddsNutrition.get());
+		tag.putBoolean(DIMINISHED_EAT_TIME_SCALING, common.diminishedEatTimeScaling.get());
 		tag.putInt(FOOD_GROUP_DIVERSITY_THRESHOLD, common.foodGroupDiversityThreshold.get());
 		tag.putBoolean(USE_FOOD_GROUPS_AS_WHITELISTS, common.useFoodGroupsAsWhitelists.get());
 		tag.putInt(NEW_PLAYER_FOODS_EATEN_THRESHOLD, common.newPlayerFoodsEatenThreshold.get());
