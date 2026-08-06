@@ -204,7 +204,8 @@ public class FoodContainerItem extends Item {
 
 	private InteractionResultHolder<ItemStack> processRightClick(Level world, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (isInventoryEmpty(stack) ||
+		ItemStackHandler handler = getInventory(stack);
+		if (handler == null || getBestFoodSlot(handler, player) < 0 ||
 				(ModList.get().isLoaded("origins") && Origins.hasRestrictedDiet(player))) {
 			return InteractionResultHolder.pass(stack);
 		}
@@ -295,7 +296,7 @@ public class FoodContainerItem extends Item {
 		for (int i = 0; i < handler.getSlots(); i++) {
 			ItemStack food = handler.getStackInSlot(i);
 
-			if (!food.isEdible() || food.isEmpty())
+			if (!food.isEdible() || food.isEmpty() || isWorthless(food, player, foodList))
 				continue;
 			double rank = foodList.rankFood(food.getItem());
 			if (rank > bestRank) {
@@ -305,5 +306,15 @@ public class FoodContainerItem extends Item {
 		}
 
 		return bestFoodSlot;
+	}
+
+	// mirrors the eat-time guard direct eating gets: never feed a food diminished to nothing
+	private static boolean isWorthless(ItemStack food, Player player, FoodList foodList) {
+		FoodProperties properties = food.getFoodProperties(player);
+		if (properties == null) return true;
+
+		FoodList.MealValues meal = foodList.diminish(food.getItem(), properties.getNutrition(),
+				properties.getNutrition() * properties.getSaturationModifier() * 2.0F);
+		return meal.hunger() <= 0 && meal.saturation() <= 0.0F;
 	}
 }

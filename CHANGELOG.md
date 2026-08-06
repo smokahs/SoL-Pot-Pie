@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.1 
+1. Added appleskin compat for lunchboxes
+ - The hunger overlay and tooltip preview the food the container would actually feed you. Empty containers show nothing.
+ - `hideValuesUntilEaten` now checks the food inside, not the container.
+
+2. Containers no longer feed you worthless food, lol
+
 ## 2.3.0
 
 1. Lunchboxes now open and close, like the old spice of life edition
