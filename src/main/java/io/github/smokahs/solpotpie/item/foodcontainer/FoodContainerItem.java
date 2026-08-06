@@ -128,18 +128,28 @@ public class FoodContainerItem extends Item {
 		return moved;
 	}
 
+	private record PullCandidate(int slot, double freshness, double rank) {}
+
 	private static boolean pullBestFoodFrom(ItemStackHandler container, IItemHandler target, Player player) {
 		FoodList foodList = FoodList.get(player);
-		List<Integer> foodSlots = new ArrayList<>();
+		List<PullCandidate> candidates = new ArrayList<>();
 		for (int i = 0; i < target.getSlots(); i++) {
-			if (target.getStackInSlot(i).isEdible()) {
-				foodSlots.add(i);
+			ItemStack chestStack = target.getStackInSlot(i);
+			if (!chestStack.isEdible()) {
+				continue;
 			}
+			double freshness = freshness(chestStack, player, foodList);
+			if (freshness <= 0) {
+				continue;
+			}
+			candidates.add(new PullCandidate(i, freshness, foodList.rankFood(chestStack.getItem())));
 		}
-		foodSlots.sort(Comparator.comparingDouble(slot -> -foodList.rankFood(target.getStackInSlot(slot).getItem())));
+		candidates.sort(Comparator.comparingDouble(PullCandidate::freshness)
+				.thenComparingDouble(PullCandidate::rank).reversed());
 
 		boolean moved = false;
-		for (int slotNum : foodSlots) {
+		for (PullCandidate candidate : candidates) {
+			int slotNum = candidate.slot();
 			ItemStack available = target.extractItem(slotNum, target.getStackInSlot(slotNum).getMaxStackSize(), true);
 			if (available.isEmpty() || !available.isEdible()) {
 				continue;
@@ -310,11 +320,19 @@ public class FoodContainerItem extends Item {
 
 	// mirrors the eat-time guard direct eating gets: never feed a food diminished to nothing
 	private static boolean isWorthless(ItemStack food, Player player, FoodList foodList) {
-		FoodProperties properties = food.getFoodProperties(player);
-		if (properties == null) return true;
+		return freshness(food, player, foodList) <= 0;
+	}
 
-		FoodList.MealValues meal = foodList.diminish(food.getItem(), properties.getNutrition(),
-				properties.getNutrition() * properties.getSaturationModifier() * 2.0F);
-		return meal.hunger() <= 0 && meal.saturation() <= 0.0F;
+	// fraction of full hunger+saturation the food currently restores, 0..1
+	private static double freshness(ItemStack food, Player player, FoodList foodList) {
+		FoodProperties properties = food.getFoodProperties(player);
+		if (properties == null) return 0;
+
+		float fullSaturation = properties.getNutrition() * properties.getSaturationModifier() * 2.0F;
+		double full = properties.getNutrition() + fullSaturation;
+		if (full <= 0) return 0;
+
+		FoodList.MealValues meal = foodList.diminish(food.getItem(), properties.getNutrition(), fullSaturation);
+		return (meal.hunger() + meal.saturation()) / full;
 	}
 }

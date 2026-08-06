@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.2
+1. Fixes
+ - Restocking an open container from a chest no longer pulls foods diminished to nothing.
+ - Restocking now prefers the least diminished foods first. Equally fresh foods still rank by never-tasted, then longest-without.
+
 ## 2.3.1 
 1. Added appleskin compat for lunchboxes
  - The hunger overlay and tooltip preview the food the container would actually feed you. Empty containers show nothing.
