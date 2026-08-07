@@ -4,6 +4,9 @@ import io.github.smokahs.solpotpie.tracking.CapabilityHandler;
 import io.github.smokahs.solpotpie.tracking.HeartsHandler;
 import io.github.smokahs.solpotpie.tracking.PackTotals;
 import com.google.common.collect.Lists;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
@@ -17,6 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITagManager;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -27,6 +31,9 @@ import java.util.regex.Pattern;
 public final class SOLPotPieConfig
 {
 	private static final String HUNGER_OVERHAULED = "hungeroverhauled";
+
+	private static final TagKey<Item> DISABLED_TAG =
+			TagKey.create(Registries.ITEM, new ResourceLocation(SOLPotPie.MOD_ID, "disabled"));
 
 	private static final double BASE_HEART_COST_DEFAULT = 10.0;
 	private static final double BASE_HEART_COST_HUNGER_OVERHAULED = 6.0;
@@ -400,12 +407,16 @@ public final class SOLPotPieConfig
 			blacklist = builder
 					.translation(localizationPath("blacklist"))
 					.comment(" Foods in this list won't give points or appear in the food queue.\n"
+							+" Entries are registry names with * wildcards (\"somemod:*\"), or item tags\n"
+							+" prefixed with # (\"#forge:crops\"). Items tagged #solpotpie:disabled by a\n"
+							+" datapack are always excluded, even when a whitelist is set.\n"
 							+"\n")
 					.defineList("blacklist", Lists.newArrayList(), e -> e instanceof String);
 
 			whitelist = builder
 					.translation(localizationPath("whitelist"))
 					.comment("\n When this list contains anything, the blacklist is ignored and instead only foods from here count.\n"
+							+" Same syntax as the blacklist: registry names, * wildcards, or #item tags.\n"
 							+"\n")
 					.defineList("whitelist", Lists.newArrayList(), e -> e instanceof String);
 
@@ -464,13 +475,17 @@ public final class SOLPotPieConfig
 	}
 
 	public static boolean hasTooltip(Item food) {
-		String id = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(food)).toString();
-		return !matchesAnyPattern(id, CLIENT.tooltipBlacklist.get());
+		return !matchesAnyEntry(food, CLIENT.tooltipBlacklist.get());
+	}
+
+	public static boolean modTooltipSupportEnabled() {
+		return CLIENT.modTooltipSupport.get();
 	}
 
 	public static class Client {
 		public final BooleanValue isFoodTooltipEnabled;
 		public final BooleanValue hideValuesUntilEaten;
+		public final BooleanValue modTooltipSupport;
 		public final ConfigValue<List<? extends String>> tooltipBlacklist;
 
 		Client(Builder builder) {
@@ -489,13 +504,21 @@ public final class SOLPotPieConfig
 						+"\n")
 				.define("hideValuesUntilEaten", true);
 
+			modTooltipSupport = builder
+				.translation(localizationPath("mod_tooltip_support"))
+				.comment("\n If true, food tooltip lines from the various mods with support\n"
+						+" are hidden until the food has been eaten, and only shown while\n"
+						+" holding shift\n"
+						+"\n")
+				.define("modTooltipSupport", true);
+
 			tooltipBlacklist = builder
 				.translation(localizationPath("tooltip_blacklist"))
 				.comment("\n Items in this list never get any Spice of Life tooltip line, including the\n"
 						+" \"Not yet eaten\" one. Use it for edible items that aren't really meals,\n"
 						+" e.g. lunchboxes or machine/placeholder foods.\n"
 						+" Each entry is a registry name, e.g. \"minecraft:bread\".\n"
-						+" Supports * wildcards, e.g. \"solpotpie:*\" covers every item of this mod.\n"
+						+" Supports * wildcards (\"solpotpie:*\") and #item tags (\"#forge:crops\").\n"
 						+" This is cosmetic only: it does not change scoring or tracking.\n"
 						+"\n")
 				.defineList("tooltipBlacklist", Lists.newArrayList(
@@ -513,11 +536,13 @@ public final class SOLPotPieConfig
 	}
 
 	public static boolean isAllowed(Item food) {
-		String id = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(food)).toString();
+		if (isTagged(food, DISABLED_TAG)) {
+			return false;
+		}
 		if (hasWhitelist()) {
-			return matchesAnyPattern(id, Sync.raw(Sync.WHITELIST, COMMON.whitelist.get()));
+			return matchesAnyEntry(food, Sync.raw(Sync.WHITELIST, COMMON.whitelist.get()));
 		} else {
-			return !matchesAnyPattern(id, Sync.raw(Sync.BLACKLIST, COMMON.blacklist.get()));
+			return !matchesAnyEntry(food, Sync.raw(Sync.BLACKLIST, COMMON.blacklist.get()));
 		}
 	}
 
@@ -525,22 +550,37 @@ public final class SOLPotPieConfig
 		return isAllowed(food);
 	}
 
-	private static boolean matchesAnyPattern(String query, Collection<? extends String> patterns) {
-		for (String glob : patterns) {
-			StringBuilder pattern = new StringBuilder(glob.length());
-			for (String part : glob.split("\\*", -1)) {
-				if (!part.isEmpty()) {
-					pattern.append(Pattern.quote(part));
+	private static boolean matchesAnyEntry(Item food, Collection<? extends String> entries) {
+		String id = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(food)).toString();
+		for (String entry : entries) {
+			if (entry.startsWith("#")) {
+				ResourceLocation tagId = ResourceLocation.tryParse(entry.substring(1));
+				if (tagId != null && isTagged(food, TagKey.create(Registries.ITEM, tagId))) {
+					return true;
 				}
-				pattern.append(".*");
-			}
-
-			pattern.delete(pattern.length() - 2, pattern.length());
-
-			if (Pattern.matches(pattern.toString(), query)) {
+			} else if (matchesPattern(id, entry)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private static boolean isTagged(Item food, TagKey<Item> tag) {
+		ITagManager<Item> tags = ForgeRegistries.ITEMS.tags();
+		return tags != null && tags.getTag(tag).contains(food);
+	}
+
+	private static boolean matchesPattern(String query, String glob) {
+		StringBuilder pattern = new StringBuilder(glob.length());
+		for (String part : glob.split("\\*", -1)) {
+			if (!part.isEmpty()) {
+				pattern.append(Pattern.quote(part));
+			}
+			pattern.append(".*");
+		}
+
+		pattern.delete(pattern.length() - 2, pattern.length());
+
+		return Pattern.matches(pattern.toString(), query);
 	}
 }

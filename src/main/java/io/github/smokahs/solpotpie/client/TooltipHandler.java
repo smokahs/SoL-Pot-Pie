@@ -7,6 +7,7 @@ import io.github.smokahs.solpotpie.tracking.FoodList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -64,7 +65,7 @@ public final class TooltipHandler {
 		}
 
 		if (!Screen.hasShiftDown()) {
-			lines.add(Component.literal(localized("gui", "food_book.queue.tooltip.hold_shift")));
+			lines.add(localizedComponent("gui", "food_book.queue.tooltip.hold_shift"));
 			return lines;
 		}
 
@@ -86,24 +87,24 @@ public final class TooltipHandler {
 		int lastEaten = foodList.getLastEaten(food);
 		if (lastEaten == -1) return null;
 
-		String text;
+		MutableComponent text;
 		if (lastEaten == 0) {
 			int inARow = Math.max(foodList.currentStreak(food), 1);
 			if (inARow == 1) {
-				text = localized("gui", "food_book.queue.tooltip.most_recent");
+				text = localizedComponent("gui", "food_book.queue.tooltip.most_recent");
 			} else if (inARow == 2) {
-				text = localized("gui", "food_book.queue.tooltip.most_recent_twice");
+				text = localizedComponent("gui", "food_book.queue.tooltip.most_recent_twice");
 			} else {
-				text = localized("gui", "food_book.queue.tooltip.most_recent_streak", spelledNumber(inARow));
+				text = localizedComponent("gui", "food_book.queue.tooltip.most_recent_streak", spelledNumber(inARow));
 			}
 		} else {
 			String path = lastEaten == 1
 					? "food_book.queue.tooltip.last_eaten_label_singular"
 					: "food_book.queue.tooltip.last_eaten_label";
-			text = localized("gui", path, spelledNumber(lastEaten));
+			text = localizedComponent("gui", path, spelledNumber(lastEaten));
 		}
 
-		return Component.literal(text).withStyle(ChatFormatting.GRAY);
+		return text.withStyle(ChatFormatting.GRAY);
 	}
 
 	private static int insertionIndex(List<Component> tooltip, Item food) {

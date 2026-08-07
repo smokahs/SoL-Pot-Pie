@@ -98,6 +98,7 @@
 
 	"config.solpotpie.is_food_tooltip_enabled": "Enable Food Tooltip",
 	"config.solpotpie.hide_values_until_eaten": "Hide Values Until Eaten",
+	"config.solpotpie.mod_tooltip_support": "Mod Tooltip Support",
 	"config.solpotpie.tooltip_blacklist": "Tooltip Blacklist",
 	"config.solpotpie.food_blacklist": "Blacklist",
 	"config.solpotpie.food_whitelist": "Whitelist (disables blacklist)",

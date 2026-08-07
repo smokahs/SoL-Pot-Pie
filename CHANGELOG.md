@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.4.0
+
+1. Blacklists and whitelists now accept item tags ([#1](https://github.com/smokahs/SoL-Pot-Pie/issues/1))
+ - `blacklist`, `whitelist` and `tooltipBlacklist` entries prefixed with `#` match item tags, e.g. `#forge:crops`. Registry names and `*` wildcards work
+ - Items tagged `#solpotpie:disabled` by any datapack are always excluded, no config needed, even when a whitelist is set.
+ - changes apply on `/reload`.
+
+2. Tooltip compat with other food mods ([#2](https://github.com/smokahs/SoL-Pot-Pie/issues/2))
+ - Food tooltip lines from Diet, Farmer's Delight, Legendary Survival Overhaul, Food Effect Tooltips and Hunger Overhauled all now: hidden until the food is first eaten (with `hideValuesUntilEaten`), then only shown while holding shift.
+ - new config `modTooltipSupport` (default true) turns it off if they conflict with other mods
+
+**Thank you Yurisan!**
+
 ## 2.3.2
 1. Fixes
  - Restocking an open container from a chest no longer pulls foods diminished to nothing.

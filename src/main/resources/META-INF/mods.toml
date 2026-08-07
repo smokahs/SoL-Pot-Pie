@@ -42,3 +42,38 @@ foods over and over restores less and less hunger, so keep your diet varied!
 	versionRange = "[1.20.1-85,)"
 	ordering = "AFTER"
 	side = "BOTH"
+
+[[dependencies]]
+	modId = "diet"
+	mandatory = false
+	versionRange = "[0,)"
+	ordering = "AFTER"
+	side = "BOTH"
+
+[[dependencies]]
+	modId = "farmersdelight"
+	mandatory = false
+	versionRange = "[0,)"
+	ordering = "AFTER"
+	side = "BOTH"
+
+[[dependencies]]
+	modId = "legendarysurvivaloverhaul"
+	mandatory = false
+	versionRange = "[0,)"
+	ordering = "AFTER"
+	side = "BOTH"
+
+[[dependencies]]
+	modId = "foodeffecttooltips"
+	mandatory = false
+	versionRange = "[0,)"
+	ordering = "AFTER"
+	side = "CLIENT"
+
+[[dependencies]]
+	modId = "hungeroverhauled"
+	mandatory = false
+	versionRange = "[0,)"
+	ordering = "AFTER"
+	side = "BOTH"

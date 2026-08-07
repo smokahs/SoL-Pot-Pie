@@ -130,6 +130,12 @@ dependencies {
 	// appleskin soft compat: hide hunger/saturation display for foods not yet eaten
 	implementation fg.deobf("curse.maven:appleskin-248787:4770828")
 
+	// tooltip soft compat: fold these mods' food tooltip lines into hide-until-eaten / hold-shift
+	implementation fg.deobf("curse.maven:diet-443570:4813904")
+	implementation fg.deobf("curse.maven:legendary-survival-overhaul-840254:8450364")
+	implementation fg.deobf("curse.maven:farmers-delight-398521:8083474")
+	implementation fg.deobf("curse.maven:food-effect-tooltips-forge-776426:8328256")
+
 	// the food book is a patchouli book, so this is a hard dependency
 	implementation fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
 
